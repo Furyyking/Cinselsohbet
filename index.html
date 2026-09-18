@@ -107,11 +107,6 @@ input:focus{
   cursor:pointer;
 }
 
-.btn:disabled{
-  opacity:.6;
-  cursor:wait;
-}
-
 .register{
   background:#e83e8c;
 }
@@ -121,11 +116,15 @@ input:focus{
   background:#263650;
 }
 
+.btn:disabled{
+  opacity:.6;
+}
+
 #loginMessage{
   text-align:center;
   margin-top:14px;
-  font-size:14px;
   min-height:20px;
+  font-size:14px;
 }
 
 #chat{
@@ -194,10 +193,17 @@ input:focus{
   padding:12px;
   margin-bottom:10px;
   border-radius:9px;
+  word-wrap:break-word;
 }
 
 .message b{
   color:#e83e8c;
+}
+
+.message-time{
+  color:#8190a6;
+  font-size:11px;
+  margin-left:8px;
 }
 
 .send{
@@ -218,6 +224,7 @@ input:focus{
   background:#e83e8c;
   color:#fff;
   font-weight:bold;
+  cursor:pointer;
 }
 
 .user{
@@ -234,14 +241,6 @@ input:focus{
   margin-right:7px;
 }
 
-.admin{
-  color:#ffd166;
-}
-
-.mod{
-  color:#62d8ff;
-}
-
 .top10{
   color:#ff4b4b;
 }
@@ -254,7 +253,7 @@ input:focus{
   border:0;
   border-radius:7px;
   background:#e83e8c;
-  color:white;
+  color:#fff;
   cursor:pointer;
 }
 
@@ -303,7 +302,7 @@ input:focus{
 </div>
 
 
-<!-- GİRİŞ SAYFASI -->
+<!-- GİRİŞ -->
 
 <div id="login">
 
@@ -311,7 +310,7 @@ input:focus{
 
     <h1>Cinsel Sohbet</h1>
 
-    <p>Hesabınızla sohbete katılın</p>
+    <p>Sohbete giriş yap</p>
 
     <input
       id="username"
@@ -348,7 +347,7 @@ input:focus{
       class="btn register"
       type="button"
       onclick="registerUser()">
-      Kayıt Ol / Giriş Yap
+      Sohbete Gir
     </button>
 
     <button
@@ -365,7 +364,7 @@ input:focus{
 </div>
 
 
-<!-- SOHBET -->
+<!-- CHAT -->
 
 <div id="chat">
 
@@ -421,14 +420,7 @@ input:focus{
       <div
         class="messages"
         id="messages">
-
-        <div class="message">
-          <b>👑 Admin:</b>
-          Cinsel Sohbet'e hoş geldiniz.
-        </div>
-
       </div>
-
 
       <div class="send">
 
@@ -455,13 +447,7 @@ input:focus{
         ÇEVRİM İÇİ
       </div>
 
-      <div id="onlineUsers">
-
-        <div class="user online">
-          Misafir
-        </div>
-
-      </div>
+      <div id="onlineUsers"></div>
 
       <br>
 
@@ -506,13 +492,14 @@ const supabaseClient =
 let selectedGender = "";
 let currentUsername = "";
 let currentRoom = "#Cinsellik";
+let realtimeChannel = null;
 
 
 /* =========================
-   MESAJ GÖSTER
+   MESAJ
 ========================= */
 
-function showMessage(text, error = false){
+function showMessage(text,error=false){
 
   const box =
     document.getElementById("loginMessage");
@@ -525,7 +512,7 @@ function showMessage(text, error = false){
 
 
 /* =========================
-   CİNSİYET SEÇ
+   CİNSİYET
 ========================= */
 
 function selectGender(button){
@@ -535,7 +522,7 @@ function selectGender(button){
 
   document
     .querySelectorAll(".gender button")
-    .forEach(btn => {
+    .forEach(btn=>{
       btn.classList.remove("active");
     });
 
@@ -544,7 +531,7 @@ function selectGender(button){
 
 
 /* =========================
-   EMAIL OLUŞTUR
+   KULLANICI EMAIL
 ========================= */
 
 function usernameEmail(username){
@@ -583,14 +570,14 @@ async function registerUser(){
       .getElementById("password")
       .value;
 
-  const loginBtn =
+  const button =
     document.getElementById("loginBtn");
 
 
   if(!username){
 
     showMessage(
-      "Kullanıcı adı yaz kral.",
+      "Kullanıcı adı yaz.",
       true
     );
 
@@ -612,7 +599,7 @@ async function registerUser(){
   if(!password){
 
     showMessage(
-      "Şifre yaz kral.",
+      "Şifre yaz.",
       true
     );
 
@@ -631,12 +618,14 @@ async function registerUser(){
   }
 
 
-  loginBtn.disabled = true;
+  button.disabled = true;
 
-  loginBtn.textContent =
-    "Giriş yapılıyor...";
+  button.textContent =
+    "Bekleyin...";
 
-  showMessage("Lütfen bekle...");
+  showMessage(
+    "Giriş yapılıyor..."
+  );
 
 
   try{
@@ -645,13 +634,13 @@ async function registerUser(){
       usernameEmail(username);
 
 
-    /* ÖNCE GİRİŞ DENE */
+    /* ÖNCE GİRİŞ */
 
     const loginResult =
       await supabaseClient.auth
         .signInWithPassword({
-          email: email,
-          password: password
+          email:email,
+          password:password
         });
 
 
@@ -671,20 +660,20 @@ async function registerUser(){
     }
 
 
-    /* GİRİŞ OLMADIYSA KAYIT DENE */
+    /* YOKSA KAYIT */
 
     const registerResult =
       await supabaseClient.auth
         .signUp({
 
-          email: email,
+          email:email,
 
-          password: password,
+          password:password,
 
           options:{
             data:{
-              username: username,
-              gender: selectedGender
+              username:username,
+              gender:selectedGender
             }
           }
 
@@ -699,7 +688,6 @@ async function registerUser(){
       );
 
       console.error(
-        "Supabase:",
         registerResult.error
       );
 
@@ -710,7 +698,7 @@ async function registerUser(){
     if(!registerResult.data.session){
 
       showMessage(
-        "Hesap oluşturuldu ancak oturum açılmadı. Supabase Email Confirmation kapalı olmalı.",
+        "Hesap oluşturuldu fakat giriş yapılamadı. Email doğrulamasını kontrol et.",
         true
       );
 
@@ -740,12 +728,11 @@ async function registerUser(){
 
   }finally{
 
-    loginBtn.disabled = false;
+    button.disabled = false;
 
-    loginBtn.textContent =
-      "Kayıt Ol / Giriş Yap";
+    button.textContent =
+      "Sohbete Gir";
   }
-
 }
 
 
@@ -755,14 +742,14 @@ async function registerUser(){
 
 function guestLogin(){
 
-  const randomNumber =
+  const number =
     Math.floor(
       10000 +
       Math.random() * 90000
     );
 
   currentUsername =
-    "Misafir" + randomNumber;
+    "Misafir" + number;
 
   localStorage.setItem(
     "username",
@@ -774,7 +761,7 @@ function guestLogin(){
 
 
 /* =========================
-   SOHBETE GİR
+   CHAT'E GİR
 ========================= */
 
 function enterChat(){
@@ -810,39 +797,125 @@ function enterChat(){
 
   online.appendChild(user);
 
+
+  loadMessages();
+
+  startRealtime();
 }
 
 
 /* =========================
-   ODA DEĞİŞTİR
+   MESAJLARI YÜKLE
 ========================= */
 
-function changeRoom(roomName, button){
+async function loadMessages(){
 
-  currentRoom =
-    roomName;
+  const messagesBox =
+    document.getElementById(
+      "messages"
+    );
 
-  document
-    .getElementById("roomTitle")
-    .textContent =
-      roomName;
+  messagesBox.innerHTML = "";
 
-  document
-    .querySelectorAll(".channel")
-    .forEach(room => {
-      room.classList.remove("active");
-    });
 
-  button.classList.add("active");
+  const result =
+    await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq("room",currentRoom)
+      .order("created_at",{
+        ascending:true
+      });
 
-  document
-    .getElementById("messages")
-    .innerHTML =
+
+  if(result.error){
+
+    console.error(
+      "Mesaj yükleme hatası:",
+      result.error
+    );
+
+    messagesBox.innerHTML =
       '<div class="message">' +
-      '<b>👑 Admin:</b> ' +
-      roomName +
-      ' odasına hoş geldiniz.' +
+      '<b>Sistem:</b> Mesajlar yüklenemedi.' +
       '</div>';
+
+    return;
+  }
+
+
+  result.data.forEach(
+    message=>{
+      addMessageToScreen(
+        message
+      );
+    }
+  );
+}
+
+
+/* =========================
+   MESAJI EKRANA EKLE
+========================= */
+
+function addMessageToScreen(message){
+
+  const messagesBox =
+    document.getElementById(
+      "messages"
+    );
+
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "message";
+
+
+  const username =
+    document.createElement("b");
+
+  username.textContent =
+    message.username + ":";
+
+
+  const text =
+    document.createTextNode(
+      " " + message.message
+    );
+
+
+  const time =
+    document.createElement("span");
+
+  time.className =
+    "message-time";
+
+
+  const date =
+    new Date(
+      message.created_at
+    );
+
+  time.textContent =
+    date.toLocaleTimeString(
+      "tr-TR",
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
+
+
+  div.appendChild(username);
+  div.appendChild(text);
+  div.appendChild(time);
+
+  messagesBox.appendChild(div);
+
+  messagesBox.scrollTop =
+    messagesBox.scrollHeight;
 }
 
 
@@ -850,16 +923,11 @@ function changeRoom(roomName, button){
    MESAJ GÖNDER
 ========================= */
 
-function sendMessage(){
+async function sendMessage(){
 
   const input =
     document.getElementById(
       "messageInput"
-    );
-
-  const messages =
-    document.getElementById(
-      "messages"
     );
 
   const text =
@@ -869,41 +937,156 @@ function sendMessage(){
   if(!text) return;
 
 
-  const message =
-    document.createElement("div");
+  if(!currentUsername){
 
-  message.className =
-    "message";
+    alert(
+      "Önce giriş yapmalısın."
+    );
 
-
-  const name =
-    currentUsername ||
-    "Misafir";
+    return;
+  }
 
 
-  const safeText =
-    text
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;");
+  input.disabled = true;
 
 
-  message.innerHTML =
-    "<b>" +
-    name +
-    ":</b> " +
-    safeText;
+  const result =
+    await supabaseClient
+      .from("messages")
+      .insert({
+
+        room:currentRoom,
+
+        username:currentUsername,
+
+        message:text
+
+      })
+      .select()
+      .single();
 
 
-  messages.appendChild(
-    message
-  );
+  input.disabled = false;
+
+
+  if(result.error){
+
+    console.error(
+      "Mesaj gönderme hatası:",
+      result.error
+    );
+
+    alert(
+      "Mesaj gönderilemedi: " +
+      result.error.message
+    );
+
+    return;
+  }
 
 
   input.value = "";
 
-  messages.scrollTop =
-    messages.scrollHeight;
+  /*
+    Realtime açıksa mesaj otomatik
+    olarak ekrana gelecektir.
+  */
+}
+
+
+/* =========================
+   REALTIME
+========================= */
+
+function startRealtime(){
+
+  if(realtimeChannel){
+
+    supabaseClient
+      .removeChannel(
+        realtimeChannel
+      );
+  }
+
+
+  realtimeChannel =
+    supabaseClient
+      .channel("messages-channel")
+
+      .on(
+        "postgres_changes",
+        {
+          event:"INSERT",
+          schema:"public",
+          table:"messages"
+        },
+        payload=>{
+
+          const message =
+            payload.new;
+
+
+          if(
+            message.room ===
+            currentRoom
+          ){
+
+            addMessageToScreen(
+              message
+            );
+
+          }
+
+        }
+      )
+
+      .subscribe(
+        status=>{
+
+          console.log(
+            "Realtime:",
+            status
+          );
+
+        }
+      );
+}
+
+
+/* =========================
+   ODA DEĞİŞTİR
+========================= */
+
+async function changeRoom(
+  roomName,
+  button
+){
+
+  currentRoom =
+    roomName;
+
+
+  document
+    .getElementById("roomTitle")
+    .textContent =
+      roomName;
+
+
+  document
+    .querySelectorAll(".channel")
+    .forEach(room=>{
+      room.classList.remove(
+        "active"
+      );
+    });
+
+
+  button.classList.add(
+    "active"
+  );
+
+
+  await loadMessages();
 }
 
 
@@ -922,6 +1105,8 @@ document.addEventListener(
         "messageInput"
     ){
 
+      event.preventDefault();
+
       sendMessage();
 
     }
@@ -936,6 +1121,15 @@ document.addEventListener(
 
 async function logout(){
 
+  if(realtimeChannel){
+
+    await supabaseClient
+      .removeChannel(
+        realtimeChannel
+      );
+  }
+
+
   try{
 
     await supabaseClient
@@ -948,6 +1142,7 @@ async function logout(){
 
   }
 
+
   localStorage.removeItem(
     "username"
   );
@@ -957,7 +1152,7 @@ async function logout(){
 
 
 /* =========================
-   SUPABASE KONTROL
+   OTOMATİK OTURUM KONTROLÜ
 ========================= */
 
 window.addEventListener(
@@ -970,15 +1165,37 @@ window.addEventListener(
         await supabaseClient.auth
           .getSession();
 
-      console.log(
-        "Supabase bağlantısı hazır.",
-        result
-      );
+
+      if(
+        result.data &&
+        result.data.session
+      ){
+
+        const user =
+          result.data.session.user;
+
+
+        currentUsername =
+          user.user_metadata &&
+          user.user_metadata.username
+            ? user.user_metadata.username
+            : localStorage.getItem(
+                "username"
+              );
+
+
+        if(currentUsername){
+
+          enterChat();
+
+        }
+
+      }
 
     }catch(error){
 
       console.error(
-        "Supabase bağlantı hatası:",
+        "Oturum kontrolü:",
         error
       );
 
