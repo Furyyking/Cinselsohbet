@@ -262,11 +262,6 @@ input:focus{
   cursor:pointer;
 }
 
-
-/* =========================
-   MOBİL KANALLAR
-========================= */
-
 @media(max-width:800px){
 
   .chat-layout{
@@ -313,11 +308,6 @@ input:focus{
     display:none;
   }
 }
-
-
-/* =========================
-   TELEFON
-========================= */
 
 @media(max-width:600px){
 
@@ -396,11 +386,6 @@ input:focus{
 
 </div>
 
-
-<!-- =========================
-     GİRİŞ
-========================= -->
-
 <div id="login">
 
   <div class="login-page">
@@ -460,17 +445,9 @@ input:focus{
 
 </div>
 
-
-<!-- =========================
-     CHAT
-========================= -->
-
 <div id="chat">
 
   <div class="chat-layout">
-
-
-    <!-- KANALLAR -->
 
     <aside class="sidebar">
 
@@ -510,9 +487,6 @@ input:focus{
 
     </aside>
 
-
-    <!-- ANA SOHBET -->
-
     <main class="main">
 
       <div
@@ -544,9 +518,6 @@ input:focus{
 
     </main>
 
-
-    <!-- KULLANICILAR -->
-
     <aside class="users">
 
       <div class="title">
@@ -571,12 +542,7 @@ input:focus{
 
 </div>
 
-
 <script>
-
-/* =========================
-   SUPABASE
-========================= */
 
 const SUPABASE_URL =
   "https://kreezswhqbnxvosmbxmu.supabase.co";
@@ -590,11 +556,6 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
-
-/* =========================
-   DEĞİŞKENLER
-========================= */
-
 let selectedGender = "";
 let currentUsername = "";
 let currentRoom = "#Cinsellik";
@@ -605,10 +566,6 @@ let onlineUserId = null;
 let onlineHeartbeat = null;
 let onlineRealtimeChannel = null;
 
-
-/* =========================
-   GİRİŞ MESAJI
-========================= */
 
 function showMessage(text,error=false){
 
@@ -625,10 +582,6 @@ function showMessage(text,error=false){
       : "#55e67a";
 }
 
-
-/* =========================
-   CİNSİYET
-========================= */
 
 function selectGender(button){
 
@@ -651,10 +604,6 @@ function selectGender(button){
 }
 
 
-/* =========================
-   EMAIL
-========================= */
-
 function usernameEmail(username){
 
   let clean =
@@ -673,10 +622,6 @@ function usernameEmail(username){
     "@cinselsohbet.com";
 }
 
-
-/* =========================
-   GİRİŞ / KAYIT
-========================= */
 
 async function registerUser(){
 
@@ -763,8 +708,6 @@ async function registerUser(){
       );
 
 
-    /* ÖNCE GİRİŞ */
-
     const loginResult =
       await supabaseClient.auth
         .signInWithPassword({
@@ -788,8 +731,6 @@ async function registerUser(){
       return;
     }
 
-
-    /* KULLANICI YOKSA KAYIT */
 
     const registerResult =
       await supabaseClient.auth
@@ -866,10 +807,6 @@ async function registerUser(){
 }
 
 
-/* =========================
-   MİSAFİR
-========================= */
-
 function guestLogin(){
 
   const number =
@@ -892,10 +829,6 @@ function guestLogin(){
 }
 
 
-/* =========================
-   CHAT'E GİR
-========================= */
-
 function enterChat(){
 
   document
@@ -913,7 +846,6 @@ function enterChat(){
     .style.display =
       "block";
 
-
   loadMessages();
 
   startRealtime();
@@ -921,10 +853,6 @@ function enterChat(){
   joinOnlineUsers();
 }
 
-
-/* =========================
-   MESAJLARI YÜKLE
-========================= */
 
 async function loadMessages(){
 
@@ -977,10 +905,6 @@ async function loadMessages(){
   );
 }
 
-
-/* =========================
-   MESAJI EKRANA EKLE
-========================= */
 
 function addMessageToScreen(message){
 
@@ -1064,10 +988,6 @@ function addMessageToScreen(message){
 }
 
 
-/* =========================
-   MESAJ GÖNDER
-========================= */
-
 async function sendMessage(){
 
   const input =
@@ -1137,10 +1057,6 @@ async function sendMessage(){
 }
 
 
-/* =========================
-   MESAJ REALTIME
-========================= */
-
 function startRealtime(){
 
   if(realtimeChannel){
@@ -1189,17 +1105,11 @@ function startRealtime(){
 }
 
 
-/* =========================
-   ÇEVRİM İÇİNE GİR
-========================= */
-
 async function joinOnlineUsers(){
 
   if(!currentUsername)
     return;
 
-
-  /* Aynı isim varsa eski kaydı temizle */
 
   await supabaseClient
     .from("online_users")
@@ -1209,8 +1119,6 @@ async function joinOnlineUsers(){
       currentUsername
     );
 
-
-  /* Yeni kayıt */
 
   const result =
     await supabaseClient
@@ -1249,8 +1157,6 @@ async function joinOnlineUsers(){
   loadOnlineUsers();
 
 
-  /* 30 saniyede bir aktiflik */
-
   if(onlineHeartbeat){
 
     clearInterval(
@@ -1269,10 +1175,6 @@ async function joinOnlineUsers(){
   startOnlineRealtime();
 }
 
-
-/* =========================
-   AKTİFLİK GÜNCELLE
-========================= */
 
 async function updateOnlineStatus(){
 
@@ -1294,10 +1196,6 @@ async function updateOnlineStatus(){
     );
 }
 
-
-/* =========================
-   ONLINE LİSTE
-========================= */
 
 async function loadOnlineUsers(){
 
@@ -1359,10 +1257,6 @@ async function loadOnlineUsers(){
 }
 
 
-/* =========================
-   ONLINE REALTIME
-========================= */
-
 function startOnlineRealtime(){
 
   if(onlineRealtimeChannel){
@@ -1397,10 +1291,6 @@ function startOnlineRealtime(){
       .subscribe();
 }
 
-
-/* =========================
-   ODA DEĞİŞTİR
-========================= */
 
 async function changeRoom(
   roomName,
@@ -1441,10 +1331,6 @@ async function changeRoom(
 }
 
 
-/* =========================
-   ONLINE ODA GÜNCELLE
-========================= */
-
 async function updateOnlineRoom(){
 
   if(!onlineUserId)
@@ -1472,10 +1358,6 @@ async function updateOnlineRoom(){
 }
 
 
-/* =========================
-   ENTER MESAJ
-========================= */
-
 document.addEventListener(
   "keydown",
   function(event){
@@ -1496,10 +1378,6 @@ document.addEventListener(
 );
 
 
-/* =========================
-   ÇIKIŞ
-========================= */
-
 async function logout(){
 
   if(onlineHeartbeat){
@@ -1507,36 +1385,77 @@ async function logout(){
     clearInterval(
       onlineHeartbeat
     );
-  }
 
-
-  if(onlineRealtimeChannel){
-
-    await supabaseClient
-      .removeChannel(
-        onlineRealtimeChannel
-      );
+    onlineHeartbeat = null;
   }
 
 
   if(onlineUserId){
 
-    await supabaseClient
-      .from("online_users")
-      .delete()
-      .eq(
-        "id",
-        onlineUserId
+    try{
+
+      await supabaseClient
+        .from("online_users")
+        .delete()
+        .eq(
+          "id",
+          onlineUserId
+        );
+
+    }catch(error){
+
+      console.error(
+        "Online kullanıcı silme:",
+        error
       );
+
+    }
+
   }
+
+
+  onlineUserId = null;
 
 
   if(realtimeChannel){
 
-    await supabaseClient
-      .removeChannel(
-        realtimeChannel
+    try{
+
+      await supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+    }catch(error){
+
+      console.error(
+        error
       );
+
+    }
+
+    realtimeChannel = null;
+  }
+
+
+  if(onlineRealtimeChannel){
+
+    try{
+
+      await supabaseClient
+        .removeChannel(
+          onlineRealtimeChannel
+        );
+
+    }catch(error){
+
+      console.error(
+        error
+      );
+
+    }
+
+    onlineRealtimeChannel = null;
   }
 
 
@@ -1548,7 +1467,10 @@ async function logout(){
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Çıkış hatası:",
+      error
+    );
 
   }
 
@@ -1557,13 +1479,17 @@ async function logout(){
     "username"
   );
 
+
+  currentUsername = "";
+
+  currentRoom = "#Cinsellik";
+
+  selectedGender = "";
+
+
   location.reload();
 }
 
-
-/* =========================
-   OTURUM KONTROL
-========================= */
 
 window.addEventListener(
   "load",
@@ -1577,29 +1503,43 @@ window.addEventListener(
           .getSession();
 
 
-      if(
-        result.data &&
-        result.data.session
-      ){
-
-        const user =
-          result.data.session.user;
+      const session =
+        result.data.session;
 
 
-        currentUsername =
-          user.user_metadata &&
-          user.user_metadata.username
-            ? user.user_metadata.username
-            : localStorage.getItem(
-                "username"
-              );
+      if(session){
+
+        const savedUsername =
+          localStorage.getItem(
+            "username"
+          );
 
 
-        if(currentUsername){
+        if(savedUsername){
 
-          enterChat();
+          currentUsername =
+            savedUsername;
+
+        }else{
+
+          currentUsername =
+            session.user
+              .user_metadata
+              ?.username ||
+            session.user
+              .email
+              ?.split("@")[0] ||
+            "Kullanıcı";
+
+          localStorage.setItem(
+            "username",
+            currentUsername
+          );
 
         }
+
+
+        enterChat();
 
       }
 
