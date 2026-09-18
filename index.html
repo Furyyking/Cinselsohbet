@@ -42,6 +42,7 @@ button{
   align-items:center;
   padding:0 20px;
   position:relative;
+  z-index:1100;
 }
 
 .logo{
@@ -656,6 +657,7 @@ input:focus{
 
 </div>
 
+
 <!-- =========================
      GİRİŞ
 ========================= -->
@@ -727,6 +729,7 @@ input:focus{
 
 </div>
 
+
 <!-- =========================
      CHAT
 ========================= -->
@@ -783,6 +786,7 @@ input:focus{
 
     </aside>
 
+
     <main class="main">
 
       <div
@@ -818,6 +822,7 @@ input:focus{
 
     </main>
 
+
     <aside class="users">
 
       <div class="title">
@@ -831,6 +836,7 @@ input:focus{
   </div>
 
 </div>
+
 
 <!-- =========================
      ADMIN PANEL
@@ -856,6 +862,7 @@ input:focus{
 
     </div>
 
+
     <div class="admin-cards">
 
       <div class="admin-card">
@@ -874,6 +881,7 @@ input:focus{
 
       </div>
 
+
       <div class="admin-card">
 
         <div class="admin-card-title">
@@ -889,6 +897,7 @@ input:focus{
         </div>
 
       </div>
+
 
       <div class="admin-card">
 
@@ -908,6 +917,7 @@ input:focus{
 
     </div>
 
+
     <div class="admin-table-box">
 
       <div class="admin-table-title">
@@ -925,6 +935,7 @@ input:focus{
 
       </div>
 
+
       <div class="admin-table-wrapper">
 
         <table class="admin-table">
@@ -934,13 +945,9 @@ input:focus{
             <tr>
 
               <th>Kullanıcı</th>
-
               <th>Cinsiyet</th>
-
               <th>Rol</th>
-
               <th>Kayıt</th>
-
               <th>İşlem</th>
 
             </tr>
@@ -958,6 +965,7 @@ input:focus{
   </div>
 
 </div>
+
 
 <script>
 
@@ -977,6 +985,7 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
+
 /* =========================
    DEĞİŞKENLER
 ========================= */
@@ -992,6 +1001,7 @@ let currentRole = "user";
 let realtimeChannel = null;
 
 let onlineRealtimeChannel = null;
+
 
 /* =========================
    GİRİŞ MESAJI
@@ -1011,6 +1021,7 @@ function showMessage(text,error=false){
       ? "#ff5c5c"
       : "#55e67a";
 }
+
 
 /* =========================
    CİNSİYET
@@ -1038,6 +1049,7 @@ function selectGender(button){
   );
 }
 
+
 /* =========================
    EMAIL
 ========================= */
@@ -1059,6 +1071,7 @@ function usernameEmail(username){
   return clean +
     "@cinselsohbet.com";
 }
+
 
 /* =========================
    PROFİL
@@ -1127,11 +1140,14 @@ async function loadMyProfile(){
         "username",
         currentUsername
       );
+
     }
+
   }
 
   updateAdminButton();
 }
+
 
 /* =========================
    ADMIN BUTONU
@@ -1159,6 +1175,7 @@ function updateAdminButton(){
   }
 }
 
+
 /* =========================
    GİRİŞ / KAYIT
 ========================= */
@@ -1185,6 +1202,7 @@ async function registerUser(){
       "loginBtn"
     );
 
+
   if(!username){
 
     showMessage(
@@ -1194,6 +1212,7 @@ async function registerUser(){
 
     return;
   }
+
 
   if(username.length < 3){
 
@@ -1205,6 +1224,7 @@ async function registerUser(){
     return;
   }
 
+
   if(!password){
 
     showMessage(
@@ -1214,6 +1234,7 @@ async function registerUser(){
 
     return;
   }
+
 
   if(password.length < 6){
 
@@ -1225,6 +1246,7 @@ async function registerUser(){
     return;
   }
 
+
   button.disabled = true;
 
   button.textContent =
@@ -1234,12 +1256,16 @@ async function registerUser(){
     "Giriş yapılıyor..."
   );
 
+
   try{
 
     const email =
       usernameEmail(
         username
       );
+
+
+    /* ÖNCE GİRİŞ DENE */
 
     const loginResult =
       await supabaseClient
@@ -1251,6 +1277,7 @@ async function registerUser(){
           password:password
 
         });
+
 
     if(!loginResult.error){
 
@@ -1268,6 +1295,9 @@ async function registerUser(){
 
       return;
     }
+
+
+    /* GİRİŞ YOKSA KAYIT DENE */
 
     const registerResult =
       await supabaseClient
@@ -1294,6 +1324,7 @@ async function registerUser(){
 
         });
 
+
     if(registerResult.error){
 
       showMessage(
@@ -1308,17 +1339,19 @@ async function registerUser(){
       return;
     }
 
+
     if(
       !registerResult.data.session
     ){
 
       showMessage(
-        "Hesap oluşturuldu fakat giriş yapılamadı.",
+        "Hesap oluşturuldu fakat giriş yapılamadı. E-posta doğrulaması açıksa e-postanı doğrula.",
         true
       );
 
       return;
     }
+
 
     currentUsername =
       username;
@@ -1331,6 +1364,7 @@ async function registerUser(){
     await loadMyProfile();
 
     enterChat();
+
 
   }catch(error){
 
@@ -1349,8 +1383,11 @@ async function registerUser(){
 
     button.textContent =
       "Sohbete Gir";
+
   }
+
 }
+
 
 /* =========================
    MİSAFİR
@@ -1382,11 +1419,12 @@ function guestLogin(){
   enterChat();
 }
 
+
 /* =========================
    CHAT'E GİR
 ========================= */
 
-function enterChat(){
+async function enterChat(){
 
   document
     .getElementById("login")
@@ -1403,12 +1441,13 @@ function enterChat(){
     .style.display =
       "block";
 
-  loadMessages();
+  await loadMessages();
 
   startRealtime();
 
-  joinOnlineUsers();
+  await joinOnlineUsers();
 }
+
 
 /* =========================
    MESAJLARI YÜKLE
@@ -1438,6 +1477,7 @@ async function loadMessages(){
         }
       );
 
+
   if(result.error){
 
     console.error(
@@ -1453,6 +1493,19 @@ async function loadMessages(){
     return;
   }
 
+
+  if(!result.data ||
+     result.data.length === 0){
+
+    box.innerHTML =
+      '<div class="message">' +
+      '<b>Sistem:</b> Bu odada henüz mesaj yok.' +
+      '</div>';
+
+    return;
+  }
+
+
   result.data.forEach(
     message=>{
 
@@ -1463,6 +1516,7 @@ async function loadMessages(){
     }
   );
 }
+
 
 /* =========================
    MESAJI EKRANA EKLE
@@ -1475,6 +1529,7 @@ function addMessageToScreen(message){
       "messages"
     );
 
+
   const div =
     document.createElement(
       "div"
@@ -1482,6 +1537,7 @@ function addMessageToScreen(message){
 
   div.className =
     "message";
+
 
   const username =
     document.createElement(
@@ -1492,11 +1548,13 @@ function addMessageToScreen(message){
     message.username +
     ":";
 
+
   const text =
     document.createTextNode(
       " " +
       message.message
     );
+
 
   const time =
     document.createElement(
@@ -1506,10 +1564,12 @@ function addMessageToScreen(message){
   time.className =
     "message-time";
 
+
   const date =
     new Date(
       message.created_at
     );
+
 
   time.textContent =
     date.toLocaleTimeString(
@@ -1520,6 +1580,7 @@ function addMessageToScreen(message){
       }
     );
 
+
   div.appendChild(username);
 
   div.appendChild(text);
@@ -1528,9 +1589,11 @@ function addMessageToScreen(message){
 
   box.appendChild(div);
 
+
   box.scrollTop =
     box.scrollHeight;
 }
+
 
 /* =========================
    MESAJ GÖNDER
@@ -1546,8 +1609,10 @@ async function sendMessage(){
   const text =
     input.value.trim();
 
+
   if(!text)
     return;
+
 
   if(!currentUsername){
 
@@ -1558,7 +1623,9 @@ async function sendMessage(){
     return;
   }
 
+
   input.disabled = true;
+
 
   const result =
     await supabaseClient
@@ -1578,7 +1645,9 @@ async function sendMessage(){
       .select()
       .single();
 
+
   input.disabled = false;
+
 
   if(result.error){
 
@@ -1595,8 +1664,34 @@ async function sendMessage(){
     return;
   }
 
+
   input.value = "";
 }
+
+
+/* =========================
+   ENTER İLE MESAJ
+========================= */
+
+document
+  .getElementById(
+    "messageInput"
+  )
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Enter"){
+
+        event.preventDefault();
+
+        sendMessage();
+
+      }
+
+    }
+  );
+
 
 /* =========================
    MESAJ REALTIME
@@ -1610,12 +1705,16 @@ function startRealtime(){
       .removeChannel(
         realtimeChannel
       );
+
+    realtimeChannel = null;
   }
+
 
   realtimeChannel =
     supabaseClient
       .channel(
-        "messages-channel"
+        "messages-channel-" +
+        Math.random()
       )
       .on(
         "postgres_changes",
@@ -1634,6 +1733,7 @@ function startRealtime(){
           const message =
             payload.new;
 
+
           if(
             message.room ===
             currentRoom
@@ -1642,11 +1742,15 @@ function startRealtime(){
             addMessageToScreen(
               message
             );
+
           }
+
         }
       )
       .subscribe();
+
 }
+
 
 /* =========================
    ONLINE KULLANICI
@@ -1657,6 +1761,7 @@ async function joinOnlineUsers(){
   if(!currentUsername)
     return;
 
+
   await supabaseClient
     .from("online_users")
     .delete()
@@ -1664,6 +1769,7 @@ async function joinOnlineUsers(){
       "username",
       currentUsername
     );
+
 
   const result =
     await supabaseClient
@@ -1680,6 +1786,7 @@ async function joinOnlineUsers(){
       .select()
       .single();
 
+
   if(result.error){
 
     console.error(
@@ -1690,10 +1797,12 @@ async function joinOnlineUsers(){
     return;
   }
 
+
   loadOnlineUsers();
 
   startOnlineRealtime();
 }
+
 
 /* =========================
    ONLINE LİSTE
@@ -1706,13 +1815,16 @@ async function loadOnlineUsers(){
       "onlineUsers"
     );
 
+
   if(!box)
     return;
+
 
   const result =
     await supabaseClient
       .from("online_users")
       .select("*");
+
 
   if(result.error){
 
@@ -1724,7 +1836,874 @@ async function loadOnlineUsers(){
     return;
   }
 
+
   box.innerHTML = "";
 
+
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
+
+    box.innerHTML =
+      '<div class="user">Kimse çevrim içi değil.</div>';
+
+    return;
+  }
+
+
   result.data.forEach(
-   
+    user=>{
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "user online";
+
+
+      div.textContent =
+        user.username;
+
+
+      box.appendChild(div);
+
+    }
+  );
+
+}
+
+
+/* =========================
+   ONLINE REALTIME
+========================= */
+
+function startOnlineRealtime(){
+
+  if(onlineRealtimeChannel){
+
+    supabaseClient
+      .removeChannel(
+        onlineRealtimeChannel
+      );
+
+    onlineRealtimeChannel =
+      null;
+  }
+
+
+  onlineRealtimeChannel =
+    supabaseClient
+      .channel(
+        "online-users-channel-" +
+        Math.random()
+      )
+      .on(
+        "postgres_changes",
+        {
+
+          event:"*",
+
+          schema:"public",
+
+          table:"online_users"
+
+        },
+
+        ()=>{
+
+          loadOnlineUsers();
+
+        }
+      )
+      .subscribe();
+
+}
+
+
+/* =========================
+   ODA DEĞİŞTİR
+========================= */
+
+async function changeRoom(
+  room,
+  element
+){
+
+  currentRoom =
+    room;
+
+
+  document
+    .querySelectorAll(
+      ".channel"
+    )
+    .forEach(
+      channel=>{
+
+        channel.classList.remove(
+          "active"
+        );
+
+      }
+    );
+
+
+  if(element){
+
+    element.classList.add(
+      "active"
+    );
+
+  }
+
+
+  document
+    .getElementById(
+      "roomTitle"
+    )
+    .textContent =
+      room;
+
+
+  await loadMessages();
+
+
+  if(currentUsername){
+
+    await supabaseClient
+      .from("online_users")
+      .update({
+
+        room:
+          currentRoom
+
+      })
+      .eq(
+        "username",
+        currentUsername
+      );
+
+  }
+
+
+  loadOnlineUsers();
+
+}
+
+
+/* =========================
+   ADMIN PANELİ AÇ
+========================= */
+
+async function openAdminPanel(){
+
+  if(
+    currentRole !== "admin" &&
+    currentRole !== "moderator"
+  ){
+
+    alert(
+      "Bu alana erişim yetkiniz yok."
+    );
+
+    return;
+  }
+
+
+  document
+    .getElementById(
+      "adminPanel"
+    )
+    .style.display =
+      "block";
+
+
+  await loadAdminUsers();
+
+}
+
+
+/* =========================
+   ADMIN PANELİ KAPAT
+========================= */
+
+function closeAdminPanel(){
+
+  document
+    .getElementById(
+      "adminPanel"
+    )
+    .style.display =
+      "none";
+
+}
+
+
+/* =========================
+   ADMIN KULLANICILARI
+========================= */
+
+async function loadAdminUsers(){
+
+  const tbody =
+    document.getElementById(
+      "adminUsers"
+    );
+
+
+  if(!tbody)
+    return;
+
+
+  tbody.innerHTML =
+    '<tr><td colspan="5" class="admin-empty">Yükleniyor...</td></tr>';
+
+
+  const result =
+    await supabaseClient
+      .from("profiles")
+      .select(
+        "id,username,gender,role,created_at"
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    console.error(
+      "Admin kullanıcıları:",
+      result.error
+    );
+
+
+    tbody.innerHTML =
+      '<tr><td colspan="5" class="admin-empty">' +
+      'Kullanıcılar yüklenemedi: ' +
+      result.error.message +
+      '</td></tr>';
+
+    return;
+  }
+
+
+  const users =
+    result.data || [];
+
+
+  let admins = 0;
+
+  let moderators = 0;
+
+
+  users.forEach(
+    user=>{
+
+      if(user.role === "admin")
+        admins++;
+
+      if(user.role === "moderator")
+        moderators++;
+
+    }
+  );
+
+
+  document
+    .getElementById(
+      "totalUsers"
+    )
+    .textContent =
+      users.length;
+
+
+  document
+    .getElementById(
+      "totalAdmins"
+    )
+    .textContent =
+      admins;
+
+
+  document
+    .getElementById(
+      "totalModerators"
+    )
+    .textContent =
+      moderators;
+
+
+  tbody.innerHTML = "";
+
+
+  if(users.length === 0){
+
+    tbody.innerHTML =
+      '<tr><td colspan="5" class="admin-empty">' +
+      'Kullanıcı bulunamadı.' +
+      '</td></tr>';
+
+    return;
+  }
+
+
+  users.forEach(
+    user=>{
+
+      const tr =
+        document.createElement(
+          "tr"
+        );
+
+
+      /* KULLANICI */
+
+      const usernameTd =
+        document.createElement(
+          "td"
+        );
+
+      usernameTd.textContent =
+        user.username ||
+        "-";
+
+
+      /* CİNSİYET */
+
+      const genderTd =
+        document.createElement(
+          "td"
+        );
+
+      genderTd.textContent =
+        user.gender ||
+        "-";
+
+
+      /* ROL */
+
+      const roleTd =
+        document.createElement(
+          "td"
+        );
+
+
+      const roleSpan =
+        document.createElement(
+          "span"
+        );
+
+
+      roleSpan.className =
+        "role";
+
+
+      if(user.role === "admin"){
+
+        roleSpan.classList.add(
+          "role-admin"
+        );
+
+        roleSpan.textContent =
+          "Admin";
+
+      }else if(
+        user.role === "moderator"
+      ){
+
+        roleSpan.classList.add(
+          "role-moderator"
+        );
+
+        roleSpan.textContent =
+          "Moderatör";
+
+      }else{
+
+        roleSpan.classList.add(
+          "role-user"
+        );
+
+        roleSpan.textContent =
+          "Kullanıcı";
+
+      }
+
+
+      roleTd.appendChild(
+        roleSpan
+      );
+
+
+      /* TARİH */
+
+      const dateTd =
+        document.createElement(
+          "td"
+        );
+
+
+      if(user.created_at){
+
+        const date =
+          new Date(
+            user.created_at
+          );
+
+        dateTd.textContent =
+          date.toLocaleDateString(
+            "tr-TR"
+          );
+
+      }else{
+
+        dateTd.textContent =
+          "-";
+
+      }
+
+
+      /* İŞLEM */
+
+      const actionTd =
+        document.createElement(
+          "td"
+        );
+
+
+      const actions =
+        document.createElement(
+          "div"
+        );
+
+
+      actions.className =
+        "role-actions";
+
+
+      if(
+        user.username ===
+        currentUsername
+      ){
+
+        const self =
+          document.createElement(
+            "span"
+          );
+
+        self.className =
+          "self-admin";
+
+        self.textContent =
+          "Kendiniz";
+
+        actions.appendChild(
+          self
+        );
+
+      }else if(
+        currentRole === "admin"
+      ){
+
+        if(
+          user.role !== "moderator"
+        ){
+
+          const makeButton =
+            document.createElement(
+              "button"
+            );
+
+          makeButton.className =
+            "role-action make-moderator";
+
+          makeButton.textContent =
+            "Moderatör Yap";
+
+          makeButton.onclick =
+            function(){
+
+              changeUserRole(
+                user.id,
+                "moderator"
+              );
+
+            };
+
+          actions.appendChild(
+            makeButton
+          );
+
+        }else{
+
+          const removeButton =
+            document.createElement(
+              "button"
+            );
+
+          removeButton.className =
+            "role-action remove-moderator";
+
+          removeButton.textContent =
+            "Moderatörlüğü Al";
+
+          removeButton.onclick =
+            function(){
+
+              changeUserRole(
+                user.id,
+                "user"
+              );
+
+            };
+
+          actions.appendChild(
+            removeButton
+          );
+
+        }
+
+      }else{
+
+        actions.textContent =
+          "-";
+
+      }
+
+
+      actionTd.appendChild(
+        actions
+      );
+
+
+      tr.appendChild(
+        usernameTd
+      );
+
+      tr.appendChild(
+        genderTd
+      );
+
+      tr.appendChild(
+        roleTd
+      );
+
+      tr.appendChild(
+        dateTd
+      );
+
+      tr.appendChild(
+        actionTd
+      );
+
+
+      tbody.appendChild(
+        tr
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   KULLANICI ROLÜ DEĞİŞTİR
+========================= */
+
+async function changeUserRole(
+  userId,
+  newRole
+){
+
+  if(currentRole !== "admin"){
+
+    alert(
+      "Bu işlem sadece admin tarafından yapılabilir."
+    );
+
+    return;
+  }
+
+
+  const confirmText =
+    newRole === "moderator"
+      ? "Bu kullanıcı moderatör yapılsın mı?"
+      : "Bu kullanıcının moderatörlüğü kaldırılsın mı?";
+
+
+  if(!confirm(confirmText))
+    return;
+
+
+  const result =
+    await supabaseClient
+      .from("profiles")
+      .update({
+
+        role:
+          newRole
+
+      })
+      .eq(
+        "id",
+        userId
+      );
+
+
+  if(result.error){
+
+    console.error(
+      "Rol değiştirme:",
+      result.error
+    );
+
+    alert(
+      "Rol değiştirilemedi: " +
+      result.error.message
+    );
+
+    return;
+  }
+
+
+  await loadAdminUsers();
+
+}
+
+
+/* =========================
+   ÇIKIŞ
+========================= */
+
+async function logout(){
+
+  try{
+
+    if(onlineRealtimeChannel){
+
+      await supabaseClient
+        .removeChannel(
+          onlineRealtimeChannel
+        );
+
+      onlineRealtimeChannel =
+        null;
+    }
+
+
+    if(realtimeChannel){
+
+      await supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+      realtimeChannel =
+        null;
+    }
+
+
+    if(currentUsername){
+
+      await supabaseClient
+        .from("online_users")
+        .delete()
+        .eq(
+          "username",
+          currentUsername
+        );
+
+    }
+
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+
+  }catch(error){
+
+    console.error(
+      "Çıkış:",
+      error
+    );
+
+  }
+
+
+  localStorage.removeItem(
+    "username"
+  );
+
+
+  currentUsername = "";
+
+  currentRole = "user";
+
+  currentRoom = "#Cinsellik";
+
+
+  document
+    .getElementById(
+      "adminPanel"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "chat"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "login"
+    )
+    .style.display =
+      "block";
+
+
+  document
+    .getElementById(
+      "logoutBtn"
+    )
+    .style.display =
+      "none";
+
+
+  updateAdminButton();
+
+}
+
+
+/* =========================
+   OTURUM KONTROL
+========================= */
+
+window.addEventListener(
+  "load",
+  async function(){
+
+    try{
+
+      const result =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if(
+        result.data &&
+        result.data.session
+      ){
+
+        const user =
+          result.data.session.user;
+
+
+        currentUsername =
+          localStorage.getItem(
+            "username"
+          ) || "";
+
+
+        if(!currentUsername){
+
+          const metadata =
+            user.user_metadata || {};
+
+
+          currentUsername =
+            metadata.username ||
+            "";
+
+        }
+
+
+        await loadMyProfile();
+
+
+        if(!currentUsername){
+
+          currentUsername =
+            "Kullanici" +
+            Math.floor(
+              10000 +
+              Math.random() *
+              90000
+            );
+
+        }
+
+
+        localStorage.setItem(
+          "username",
+          currentUsername
+        );
+
+
+        enterChat();
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Oturum kontrolü:",
+        error
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   SAYFA KAPANIRKEN ONLINE
+========================= */
+
+window.addEventListener(
+  "beforeunload",
+  function(){
+
+    if(currentUsername){
+
+      try{
+
+        supabaseClient
+          .from("online_users")
+          .delete()
+          .eq(
+            "username",
+            currentUsername
+          );
+
+      }catch(error){
+
+        console.error(error);
+
+      }
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
