@@ -621,10 +621,6 @@ input:focus{
 
 <body>
 
-<!-- =========================
-     HEADER
-========================= -->
-
 <div class="header">
 
   <div class="logo">
@@ -657,10 +653,6 @@ input:focus{
 
 </div>
 
-
-<!-- =========================
-     GİRİŞ
-========================= -->
 
 <div id="login">
 
@@ -729,10 +721,6 @@ input:focus{
 
 </div>
 
-
-<!-- =========================
-     CHAT
-========================= -->
 
 <div id="chat">
 
@@ -837,10 +825,6 @@ input:focus{
 
 </div>
 
-
-<!-- =========================
-     ADMIN PANEL
-========================= -->
 
 <div id="adminPanel">
 
@@ -1002,20 +986,8 @@ let realtimeChannel = null;
 
 let onlineRealtimeChannel = null;
 
-
-/* =========================
-   GÖSTERİLEN MESAJLAR
-========================= */
-
 const displayedMessageIds =
   new Set();
-
-
-/*
-   Kendi gönderdiğimiz mesajın
-   Realtime tarafından tekrar
-   eklenmesini engellemek için.
-*/
 
 const recentLocalMessages =
   new Map();
@@ -1564,11 +1536,6 @@ function addMessageToScreen(message){
     return;
 
 
-  /*
-     Aynı mesaj ID'sini iki kez
-     gösterme.
-  */
-
   if(message.id){
 
     if(
@@ -1587,12 +1554,6 @@ function addMessageToScreen(message){
 
   }
 
-
-  /*
-     Kendi mesajımız zaten
-     ekrana eklenmişse Realtime
-     tekrar göstermesin.
-  */
 
   const messageKey =
     getMessageKey(message);
@@ -1736,10 +1697,7 @@ async function sendMessage(){
 
 
   /*
-     Mesajı önce ekrana koyuyoruz.
-     Böylece Supabase'in SELECT
-     yetkisi olsa da olmasa da
-     kullanıcı mesajı anında görür.
+     MESAJI ANINDA EKRANA EKLE
   */
 
   const optimisticMessage = {
@@ -1777,13 +1735,8 @@ async function sendMessage(){
   try{
 
     /*
-       ÖNEMLİ:
-       Burada .select().single()
-       kullanmıyoruz.
-
-       Çünkü INSERT başarılı olsa
-       bile SELECT RLS politikası
-       yüzünden hata dönebilir.
+       Sadece INSERT.
+       SELECT kullanmıyoruz.
     */
 
     const result =
@@ -1802,11 +1755,6 @@ async function sendMessage(){
       );
 
 
-      /*
-         Başarısız gönderimde
-         optimistic mesajı kaldır.
-      */
-
       removeOptimisticMessage(
         messageKey
       );
@@ -1817,17 +1765,12 @@ async function sendMessage(){
         result.error.message
       );
 
+
       input.value = text;
 
       return;
     }
 
-
-    /*
-       Mesaj başarıyla Supabase'e
-       kaydedildi.
-       Ekranda zaten görünüyor.
-    */
 
   }catch(error){
 
@@ -1856,13 +1799,6 @@ async function sendMessage(){
 
     input.focus();
 
-
-    /*
-       Aynı içerikteki başka bir
-       mesajın normal şekilde
-       görünmesini engellememek için
-       10 saniye sonra anahtarı sil.
-    */
 
     setTimeout(
       function(){
@@ -2069,12 +2005,6 @@ function startRealtime(){
           }
 
 
-          /*
-             Kendi gönderdiğimiz mesaj
-             zaten ekranda varsa tekrar
-             ekleme.
-          */
-
           const messageKey =
             getMessageKey(
               message
@@ -2158,12 +2088,6 @@ async function joinOnlineUsers(){
       "Online kullanıcı:",
       result.error
     );
-
-    /*
-       SELECT RLS hatası olsa bile
-       online kullanıcı işlemi
-       INSERT ile tamamlanmış olabilir.
-    */
 
   }
 
@@ -3065,14 +2989,6 @@ window.addEventListener(
     if(currentUsername){
 
       try{
-
-        /*
-           beforeunload sırasında
-           normal async isteklerin
-           tamamlanması garanti değildir.
-           Yine de mevcut davranışı
-           koruyoruz.
-        */
 
         supabaseClient
           .from("online_users")
