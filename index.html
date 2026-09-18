@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
 <title>Cinsel Sohbet</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
 <style>
+
+/* =========================
+   GENEL
+========================= */
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -20,6 +31,15 @@ body{
   color:#fff;
   min-height:100vh;
 }
+
+button{
+  font-family:inherit;
+}
+
+
+/* =========================
+   HEADER
+========================= */
 
 .header{
   height:65px;
@@ -36,6 +56,35 @@ body{
   font-size:22px;
   font-weight:bold;
 }
+
+.header-buttons{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.header-btn{
+  padding:9px 13px;
+  border:0;
+  border-radius:7px;
+  color:#fff;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.admin-btn{
+  background:#7c4dff;
+}
+
+.logout{
+  background:#e83e8c;
+}
+
+
+/* =========================
+   GİRİŞ
+========================= */
 
 .login-page{
   width:92%;
@@ -127,6 +176,11 @@ input:focus{
   min-height:20px;
   font-size:14px;
 }
+
+
+/* =========================
+   CHAT
+========================= */
 
 #chat{
   display:none;
@@ -246,17 +300,157 @@ input:focus{
   margin-right:7px;
 }
 
-.logout{
-  position:absolute;
-  right:20px;
-  top:14px;
-  padding:8px 14px;
+
+/* =========================
+   ADMIN PANEL
+========================= */
+
+#adminPanel{
+  display:none;
+  position:fixed;
+  inset:65px 0 0 0;
+  background:#111b2b;
+  z-index:1000;
+  overflow-y:auto;
+}
+
+.admin-container{
+  width:94%;
+  max-width:1100px;
+  margin:25px auto;
+}
+
+.admin-header{
+  background:#1c2a40;
+  border:1px solid #34445d;
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.admin-header h2{
+  color:#e83e8c;
+}
+
+.close-admin{
   border:0;
   border-radius:7px;
   background:#e83e8c;
   color:#fff;
+  padding:9px 14px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.admin-cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.admin-card{
+  background:#1c2a40;
+  border:1px solid #34445d;
+  border-radius:12px;
+  padding:18px;
+}
+
+.admin-card-title{
+  color:#aeb9ca;
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+.admin-card-number{
+  font-size:27px;
+  font-weight:bold;
+  color:#fff;
+}
+
+.admin-table-box{
+  background:#1c2a40;
+  border:1px solid #34445d;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.admin-table-title{
+  padding:17px;
+  border-bottom:1px solid #34445d;
+  color:#e83e8c;
+  font-weight:bold;
+}
+
+.admin-table-wrapper{
+  overflow-x:auto;
+}
+
+.admin-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+.admin-table th,
+.admin-table td{
+  padding:13px;
+  text-align:left;
+  border-bottom:1px solid #34445d;
+}
+
+.admin-table th{
+  color:#aeb9ca;
+  font-size:13px;
+}
+
+.admin-table td{
+  font-size:14px;
+}
+
+.role{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.role-admin{
+  background:#7c4dff;
+}
+
+.role-moderator{
+  background:#1976d2;
+}
+
+.role-user{
+  background:#40516a;
+}
+
+.admin-refresh{
+  padding:9px 13px;
+  border:0;
+  border-radius:7px;
+  background:#263650;
+  color:#fff;
   cursor:pointer;
 }
+
+.admin-empty{
+  padding:25px;
+  text-align:center;
+  color:#aeb9ca;
+}
+
+
+/* =========================
+   MOBİL
+========================= */
 
 @media(max-width:800px){
 
@@ -303,7 +497,12 @@ input:focus{
   .users{
     display:none;
   }
+
+  .admin-cards{
+    grid-template-columns:1fr;
+  }
 }
+
 
 @media(max-width:600px){
 
@@ -357,14 +556,49 @@ input:focus{
     font-size:20px;
   }
 
-  .logout{
-    right:10px;
+  .header{
+    padding:0 10px;
   }
+
+  .header-buttons{
+    gap:5px;
+  }
+
+  .header-btn{
+    padding:8px 9px;
+    font-size:12px;
+  }
+
+  .admin-container{
+    width:94%;
+    margin:15px auto;
+  }
+
+  .admin-header{
+    padding:14px;
+  }
+
+  .admin-header h2{
+    font-size:18px;
+  }
+
+  .close-admin{
+    padding:8px 10px;
+    font-size:12px;
+  }
+
 }
+
 </style>
 </head>
 
+
 <body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <div class="header">
 
@@ -372,15 +606,33 @@ input:focus{
     💬 Cinsel Sohbet
   </div>
 
-  <button
-    id="logoutBtn"
-    class="logout"
-    style="display:none"
-    onclick="logout()">
-    Çıkış
-  </button>
+  <div class="header-buttons">
+
+    <button
+      id="adminBtn"
+      class="header-btn admin-btn"
+      style="display:none"
+      onclick="openAdminPanel()">
+
+      ⚙️ Yönetim
+
+    </button>
+
+    <button
+      id="logoutBtn"
+      class="header-btn logout"
+      style="display:none"
+      onclick="logout()">
+
+      Çıkış
+
+    </button>
+
+  </div>
 
 </div>
+
+
 
 <!-- =========================
      GİRİŞ
@@ -406,44 +658,58 @@ input:focus{
       placeholder="Şifre"
       autocomplete="current-password">
 
+
     <div class="gender">
 
       <button
         type="button"
         data-gender="Kadın"
         onclick="selectGender(this)">
+
         Kadın
+
       </button>
+
 
       <button
         type="button"
         data-gender="Erkek"
         onclick="selectGender(this)">
+
         Erkek
+
       </button>
 
     </div>
+
 
     <button
       id="loginBtn"
       class="btn register"
       type="button"
       onclick="registerUser()">
+
       Sohbete Gir
+
     </button>
+
 
     <button
       class="btn guest"
       type="button"
       onclick="guestLogin()">
+
       Şifresiz Misafir Girişi
+
     </button>
+
 
     <div id="loginMessage"></div>
 
   </div>
 
 </div>
+
 
 
 <!-- =========================
@@ -454,6 +720,7 @@ input:focus{
 
   <div class="chat-layout">
 
+
     <!-- KANALLAR -->
 
     <aside class="sidebar">
@@ -462,37 +729,53 @@ input:focus{
         ODALAR
       </div>
 
+
       <div
         class="channel active"
         onclick="changeRoom('#Cinsellik',this)">
+
         #Cinsellik
+
       </div>
+
 
       <div
         class="channel"
         onclick="changeRoom('#sohbet',this)">
+
         #sohbet
+
       </div>
+
 
       <div
         class="channel"
         onclick="changeRoom('#şarkı',this)">
+
         #şarkı
+
       </div>
+
 
       <div
         class="channel"
         onclick="changeRoom('#oyun',this)">
+
         #oyun
+
       </div>
+
 
       <div
         class="channel"
         onclick="changeRoom('#yardım',this)">
+
         #yardım
+
       </div>
 
     </aside>
+
 
 
     <!-- ANA SOHBET -->
@@ -502,13 +785,17 @@ input:focus{
       <div
         class="chat-title"
         id="roomTitle">
+
         #Cinsellik
+
       </div>
+
 
       <div
         class="messages"
         id="messages">
       </div>
+
 
       <div class="send">
 
@@ -518,15 +805,19 @@ input:focus{
           placeholder="Mesajınızı yazın..."
           autocomplete="off">
 
+
         <button
           type="button"
           onclick="sendMessage()">
+
           Gönder
+
         </button>
 
       </div>
 
     </main>
+
 
 
     <!-- KULLANICILAR -->
@@ -546,6 +837,159 @@ input:focus{
 </div>
 
 
+
+<!-- =========================
+     ADMIN PANEL
+========================= -->
+
+<div id="adminPanel">
+
+  <div class="admin-container">
+
+
+    <div class="admin-header">
+
+      <h2>
+        ⚙️ Yönetim Paneli
+      </h2>
+
+      <button
+        class="close-admin"
+        onclick="closeAdminPanel()">
+
+        Sohbete Dön
+
+      </button>
+
+    </div>
+
+
+
+    <!-- İSTATİSTİKLER -->
+
+    <div class="admin-cards">
+
+      <div class="admin-card">
+
+        <div class="admin-card-title">
+          Toplam Kullanıcı
+        </div>
+
+        <div
+          id="totalUsers"
+          class="admin-card-number">
+
+          0
+
+        </div>
+
+      </div>
+
+
+      <div class="admin-card">
+
+        <div class="admin-card-title">
+          Admin
+        </div>
+
+        <div
+          id="totalAdmins"
+          class="admin-card-number">
+
+          0
+
+        </div>
+
+      </div>
+
+
+      <div class="admin-card">
+
+        <div class="admin-card-title">
+          Moderatör
+        </div>
+
+        <div
+          id="totalModerators"
+          class="admin-card-number">
+
+          0
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- KULLANICILAR -->
+
+    <div class="admin-table-box">
+
+      <div
+        class="admin-table-title">
+
+        Kullanıcı Yönetimi
+
+        <button
+          class="admin-refresh"
+          onclick="loadAdminUsers()"
+          style="float:right">
+
+          Yenile
+
+        </button>
+
+      </div>
+
+
+      <div class="admin-table-wrapper">
+
+        <table class="admin-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Kullanıcı
+              </th>
+
+              <th>
+                Cinsiyet
+              </th>
+
+              <th>
+                Rol
+              </th>
+
+              <th>
+                Kayıt
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody
+            id="adminUsers">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
 <script>
 
 /* =========================
@@ -555,8 +999,10 @@ input:focus{
 const SUPABASE_URL =
   "https://kreezswhqbnxvosmbxmu.supabase.co";
 
+
 const SUPABASE_KEY =
   "sb_publishable_sx3jrzgB5jhpgC9OU2FkGw_8lvWCIti";
+
 
 const supabaseClient =
   window.supabase.createClient(
@@ -565,36 +1011,50 @@ const supabaseClient =
   );
 
 
+
 /* =========================
    DEĞİŞKENLER
 ========================= */
 
 let selectedGender = "";
+
 let currentUsername = "";
+
 let currentRoom = "#Cinsellik";
 
+let currentRole = "user";
+
 let realtimeChannel = null;
+
 let onlineRealtimeChannel = null;
+
 
 
 /* =========================
    GİRİŞ MESAJI
 ========================= */
 
-function showMessage(text,error=false){
+function showMessage(
+  text,
+  error=false
+){
 
   const box =
     document.getElementById(
       "loginMessage"
     );
 
-  box.textContent = text;
+
+  box.textContent =
+    text;
+
 
   box.style.color =
     error
       ? "#ff5c5c"
       : "#55e67a";
 }
+
 
 
 /* =========================
@@ -606,20 +1066,25 @@ function selectGender(button){
   selectedGender =
     button.dataset.gender;
 
+
   document
     .querySelectorAll(
       ".gender button"
     )
     .forEach(btn=>{
+
       btn.classList.remove(
         "active"
       );
+
     });
+
 
   button.classList.add(
     "active"
   );
 }
+
 
 
 /* =========================
@@ -640,9 +1105,125 @@ function usernameEmail(username){
       .replace(/ç/g,"c")
       .replace(/[^a-z0-9]/g,"");
 
+
   return clean +
     "@cinselsohbet.com";
 }
+
+
+
+/* =========================
+   PROFİL BİLGİSİ
+========================= */
+
+async function loadMyProfile(){
+
+  const userResult =
+    await supabaseClient
+      .auth
+      .getUser();
+
+
+  if(
+    userResult.error ||
+    !userResult.data.user
+  ){
+
+    currentRole =
+      "user";
+
+    return;
+  }
+
+
+  const userId =
+    userResult.data.user.id;
+
+
+  const result =
+    await supabaseClient
+      .from("profiles")
+      .select(
+        "username,gender,role"
+      )
+      .eq(
+        "id",
+        userId
+      )
+      .maybeSingle();
+
+
+  if(result.error){
+
+    console.error(
+      "Profil yükleme:",
+      result.error
+    );
+
+    currentRole =
+      "user";
+
+    return;
+  }
+
+
+  if(result.data){
+
+    currentRole =
+      result.data.role ||
+      "user";
+
+
+    if(
+      result.data.username
+    ){
+
+      currentUsername =
+        result.data.username;
+
+      localStorage.setItem(
+        "username",
+        currentUsername
+      );
+
+    }
+
+  }
+
+
+  updateAdminButton();
+}
+
+
+
+/* =========================
+   ADMIN BUTONU
+========================= */
+
+function updateAdminButton(){
+
+  const button =
+    document.getElementById(
+      "adminBtn"
+    );
+
+
+  if(
+    currentRole === "admin" ||
+    currentRole === "moderator"
+  ){
+
+    button.style.display =
+      "block";
+
+  }else{
+
+    button.style.display =
+      "none";
+
+  }
+}
+
 
 
 /* =========================
@@ -659,12 +1240,14 @@ async function registerUser(){
       .value
       .trim();
 
+
   const password =
     document
       .getElementById(
         "password"
       )
       .value;
+
 
   const button =
     document.getElementById(
@@ -716,10 +1299,13 @@ async function registerUser(){
   }
 
 
-  button.disabled = true;
+  button.disabled =
+    true;
+
 
   button.textContent =
     "Bekleyin...";
+
 
   showMessage(
     "Giriş yapılıyor..."
@@ -737,10 +1323,14 @@ async function registerUser(){
     /* ÖNCE GİRİŞ */
 
     const loginResult =
-      await supabaseClient.auth
+      await supabaseClient
+        .auth
         .signInWithPassword({
+
           email:email,
+
           password:password
+
         });
 
 
@@ -749,10 +1339,15 @@ async function registerUser(){
       currentUsername =
         username;
 
+
       localStorage.setItem(
         "username",
         username
       );
+
+
+      await loadMyProfile();
+
 
       enterChat();
 
@@ -760,10 +1355,11 @@ async function registerUser(){
     }
 
 
-    /* KULLANICI YOKSA KAYIT */
+    /* KAYIT */
 
     const registerResult =
-      await supabaseClient.auth
+      await supabaseClient
+        .auth
         .signUp({
 
           email:email,
@@ -771,10 +1367,17 @@ async function registerUser(){
           password:password,
 
           options:{
+
             data:{
-              username:username,
-              gender:selectedGender
+
+              username:
+                username,
+
+              gender:
+                selectedGender
+
             }
+
           }
 
         });
@@ -795,7 +1398,9 @@ async function registerUser(){
     }
 
 
-    if(!registerResult.data.session){
+    if(
+      !registerResult.data.session
+    ){
 
       showMessage(
         "Hesap oluşturuldu fakat giriş yapılamadı.",
@@ -809,10 +1414,15 @@ async function registerUser(){
     currentUsername =
       username;
 
+
     localStorage.setItem(
       "username",
       username
     );
+
+
+    await loadMyProfile();
+
 
     enterChat();
 
@@ -820,6 +1430,7 @@ async function registerUser(){
   }catch(error){
 
     console.error(error);
+
 
     showMessage(
       "Hata: " +
@@ -829,12 +1440,15 @@ async function registerUser(){
 
   }finally{
 
-    button.disabled = false;
+    button.disabled =
+      false;
+
 
     button.textContent =
       "Sohbete Gir";
   }
 }
+
 
 
 /* =========================
@@ -850,17 +1464,28 @@ function guestLogin(){
       90000
     );
 
+
   currentUsername =
     "Misafir" +
     number;
+
+
+  currentRole =
+    "guest";
+
 
   localStorage.setItem(
     "username",
     currentUsername
   );
 
+
+  updateAdminButton();
+
+
   enterChat();
 }
+
 
 
 /* =========================
@@ -870,17 +1495,25 @@ function guestLogin(){
 function enterChat(){
 
   document
-    .getElementById("login")
+    .getElementById(
+      "login"
+    )
     .style.display =
       "none";
 
+
   document
-    .getElementById("chat")
+    .getElementById(
+      "chat"
+    )
     .style.display =
       "block";
 
+
   document
-    .getElementById("logoutBtn")
+    .getElementById(
+      "logoutBtn"
+    )
     .style.display =
       "block";
 
@@ -891,6 +1524,7 @@ function enterChat(){
 
   joinOnlineUsers();
 }
+
 
 
 /* =========================
@@ -904,7 +1538,9 @@ async function loadMessages(){
       "messages"
     );
 
-  box.innerHTML = "";
+
+  box.innerHTML =
+    "";
 
 
   const result =
@@ -930,10 +1566,12 @@ async function loadMessages(){
       result.error
     );
 
+
     box.innerHTML =
       '<div class="message">' +
       '<b>Sistem:</b> Mesajlar yüklenemedi.' +
       '</div>';
+
 
     return;
   }
@@ -941,19 +1579,24 @@ async function loadMessages(){
 
   result.data.forEach(
     message=>{
+
       addMessageToScreen(
         message
       );
+
     }
   );
 }
+
 
 
 /* =========================
    MESAJI EKRANA EKLE
 ========================= */
 
-function addMessageToScreen(message){
+function addMessageToScreen(
+  message
+){
 
   const box =
     document.getElementById(
@@ -966,6 +1609,7 @@ function addMessageToScreen(message){
       "div"
     );
 
+
   div.className =
     "message";
 
@@ -974,6 +1618,7 @@ function addMessageToScreen(message){
     document.createElement(
       "b"
     );
+
 
   username.textContent =
     message.username +
@@ -991,6 +1636,7 @@ function addMessageToScreen(message){
     document.createElement(
       "span"
     );
+
 
   time.className =
     "message-time";
@@ -1016,9 +1662,11 @@ function addMessageToScreen(message){
     username
   );
 
+
   div.appendChild(
     text
   );
+
 
   div.appendChild(
     time
@@ -1035,6 +1683,7 @@ function addMessageToScreen(message){
 }
 
 
+
 /* =========================
    MESAJ GÖNDER
 ========================= */
@@ -1045,6 +1694,7 @@ async function sendMessage(){
     document.getElementById(
       "messageInput"
     );
+
 
   const text =
     input.value.trim();
@@ -1064,7 +1714,8 @@ async function sendMessage(){
   }
 
 
-  input.disabled = true;
+  input.disabled =
+    true;
 
 
   const result =
@@ -1086,7 +1737,8 @@ async function sendMessage(){
       .single();
 
 
-  input.disabled = false;
+  input.disabled =
+    false;
 
 
   if(result.error){
@@ -1096,17 +1748,21 @@ async function sendMessage(){
       result.error
     );
 
+
     alert(
       "Mesaj gönderilemedi: " +
       result.error.message
     );
 
+
     return;
   }
 
 
-  input.value = "";
+  input.value =
+    "";
 }
+
 
 
 /* =========================
@@ -1121,6 +1777,7 @@ function startRealtime(){
       .removeChannel(
         realtimeChannel
       );
+
   }
 
 
@@ -1133,10 +1790,15 @@ function startRealtime(){
       .on(
         "postgres_changes",
         {
+
           event:"INSERT",
+
           schema:"public",
+
           table:"messages"
+
         },
+
         payload=>{
 
           const message =
@@ -1161,8 +1823,9 @@ function startRealtime(){
 }
 
 
+
 /* =========================
-   ÇEVRİM İÇİ KULLANICI
+   ONLINE KULLANICI
 ========================= */
 
 async function joinOnlineUsers(){
@@ -1170,11 +1833,6 @@ async function joinOnlineUsers(){
   if(!currentUsername)
     return;
 
-
-  /*
-     Aynı kullanıcı adına ait
-     eski kayıtları temizle
-  */
 
   await supabaseClient
     .from("online_users")
@@ -1184,10 +1842,6 @@ async function joinOnlineUsers(){
       currentUsername
     );
 
-
-  /*
-     Yeni çevrim içi kaydı
-  */
 
   const result =
     await supabaseClient
@@ -1208,7 +1862,7 @@ async function joinOnlineUsers(){
   if(result.error){
 
     console.error(
-      "Online kullanıcı hatası:",
+      "Online kullanıcı:",
       result.error
     );
 
@@ -1220,6 +1874,7 @@ async function joinOnlineUsers(){
 
   startOnlineRealtime();
 }
+
 
 
 /* =========================
@@ -1255,7 +1910,8 @@ async function loadOnlineUsers(){
   }
 
 
-  box.innerHTML = "";
+  box.innerHTML =
+    "";
 
 
   result.data.forEach(
@@ -1266,11 +1922,14 @@ async function loadOnlineUsers(){
           "div"
         );
 
+
       div.className =
         "user online";
 
+
       div.textContent =
         user.username;
+
 
       box.appendChild(
         div
@@ -1279,6 +1938,7 @@ async function loadOnlineUsers(){
     }
   );
 }
+
 
 
 /* =========================
@@ -1293,6 +1953,7 @@ function startOnlineRealtime(){
       .removeChannel(
         onlineRealtimeChannel
       );
+
   }
 
 
@@ -1305,10 +1966,15 @@ function startOnlineRealtime(){
       .on(
         "postgres_changes",
         {
+
           event:"*",
+
           schema:"public",
+
           table:"online_users"
+
         },
+
         function(){
 
           loadOnlineUsers();
@@ -1318,6 +1984,7 @@ function startOnlineRealtime(){
 
       .subscribe();
 }
+
 
 
 /* =========================
@@ -1362,11 +2029,6 @@ async function changeRoom(
   await loadMessages();
 
 
-  /*
-     Kullanıcının bulunduğu
-     odayı güncelle
-  */
-
   if(currentUsername){
 
     await supabaseClient
@@ -1389,6 +2051,288 @@ async function changeRoom(
 }
 
 
+
+/* =========================
+   ADMIN PANELİ AÇ
+========================= */
+
+async function openAdminPanel(){
+
+  if(
+    currentRole !== "admin" &&
+    currentRole !== "moderator"
+  ){
+
+    alert(
+      "Bu bölüme erişim yetkiniz yok."
+    );
+
+    return;
+  }
+
+
+  document
+    .getElementById(
+      "adminPanel"
+    )
+    .style.display =
+      "block";
+
+
+  await loadAdminUsers();
+}
+
+
+
+/* =========================
+   ADMIN PANELİ KAPAT
+========================= */
+
+function closeAdminPanel(){
+
+  document
+    .getElementById(
+      "adminPanel"
+    )
+    .style.display =
+      "none";
+}
+
+
+
+/* =========================
+   ADMIN KULLANICILARI
+========================= */
+
+async function loadAdminUsers(){
+
+  const tbody =
+    document.getElementById(
+      "adminUsers"
+    );
+
+
+  tbody.innerHTML =
+    '<tr><td colspan="4" style="text-align:center;padding:25px">Yükleniyor...</td></tr>';
+
+
+  const result =
+    await supabaseClient
+      .from("profiles")
+      .select(
+        "id,username,gender,role,created_at"
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    console.error(
+      "Admin kullanıcıları:",
+      result.error
+    );
+
+
+    tbody.innerHTML =
+      '<tr><td colspan="4" style="text-align:center;padding:25px;color:#ff5c5c">Kullanıcılar yüklenemedi.</td></tr>';
+
+
+    return;
+  }
+
+
+  const users =
+    result.data || [];
+
+
+  document
+    .getElementById(
+      "totalUsers"
+    )
+    .textContent =
+      users.length;
+
+
+  document
+    .getElementById(
+      "totalAdmins"
+    )
+    .textContent =
+      users.filter(
+        user =>
+          user.role ===
+          "admin"
+      ).length;
+
+
+  document
+    .getElementById(
+      "totalModerators"
+    )
+    .textContent =
+      users.filter(
+        user =>
+          user.role ===
+          "moderator"
+      ).length;
+
+
+  if(!users.length){
+
+    tbody.innerHTML =
+      '<tr><td colspan="4" class="admin-empty">Henüz kullanıcı yok.</td></tr>';
+
+    return;
+  }
+
+
+  tbody.innerHTML =
+    "";
+
+
+  users.forEach(
+    user=>{
+
+      const tr =
+        document.createElement(
+          "tr"
+        );
+
+
+      const username =
+        document.createElement(
+          "td"
+        );
+
+
+      username.textContent =
+        user.username ||
+        "Kullanıcı";
+
+
+      const gender =
+        document.createElement(
+          "td"
+        );
+
+
+      gender.textContent =
+        user.gender ||
+        "-";
+
+
+      const role =
+        document.createElement(
+          "td"
+        );
+
+
+      const roleSpan =
+        document.createElement(
+          "span"
+        );
+
+
+      roleSpan.className =
+        "role";
+
+
+      if(
+        user.role ===
+        "admin"
+      ){
+
+        roleSpan.classList.add(
+          "role-admin"
+        );
+
+        roleSpan.textContent =
+          "Admin";
+
+      }else if(
+        user.role ===
+        "moderator"
+      ){
+
+        roleSpan.classList.add(
+          "role-moderator"
+        );
+
+        roleSpan.textContent =
+          "Moderatör";
+
+      }else{
+
+        roleSpan.classList.add(
+          "role-user"
+        );
+
+        roleSpan.textContent =
+          "Kullanıcı";
+
+      }
+
+
+      role.appendChild(
+        roleSpan
+      );
+
+
+      const created =
+        document.createElement(
+          "td"
+        );
+
+
+      if(user.created_at){
+
+        created.textContent =
+          new Date(
+            user.created_at
+          ).toLocaleDateString(
+            "tr-TR"
+          );
+
+      }else{
+
+        created.textContent =
+          "-";
+
+      }
+
+
+      tr.appendChild(
+        username
+      );
+
+      tr.appendChild(
+        gender
+      );
+
+      tr.appendChild(
+        role
+      );
+
+      tr.appendChild(
+        created
+      );
+
+
+      tbody.appendChild(
+        tr
+      );
+
+    }
+  );
+}
+
+
+
 /* =========================
    ENTER İLE MESAJ
 ========================= */
@@ -1407,10 +2351,12 @@ document.addEventListener(
       event.preventDefault();
 
       sendMessage();
+
     }
 
   }
 );
+
 
 
 /* =========================
@@ -1418,10 +2364,6 @@ document.addEventListener(
 ========================= */
 
 async function logout(){
-
-  /*
-     Kullanıcının online kaydını sil
-  */
 
   if(currentUsername){
 
@@ -1447,10 +2389,6 @@ async function logout(){
   }
 
 
-  /*
-     Mesaj realtime kanalını kapat
-  */
-
   if(realtimeChannel){
 
     try{
@@ -1468,13 +2406,10 @@ async function logout(){
 
     }
 
-    realtimeChannel = null;
+    realtimeChannel =
+      null;
   }
 
-
-  /*
-     Online realtime kanalını kapat
-  */
 
   if(onlineRealtimeChannel){
 
@@ -1493,13 +2428,10 @@ async function logout(){
 
     }
 
-    onlineRealtimeChannel = null;
+    onlineRealtimeChannel =
+      null;
   }
 
-
-  /*
-     Supabase oturumunu kapat
-  */
 
   try{
 
@@ -1522,15 +2454,22 @@ async function logout(){
   );
 
 
-  currentUsername = "";
+  currentUsername =
+    "";
 
-  currentRoom = "#Cinsellik";
+  currentRole =
+    "user";
 
-  selectedGender = "";
+  currentRoom =
+    "#Cinsellik";
+
+  selectedGender =
+    "";
 
 
   location.reload();
 }
+
 
 
 /* =========================
@@ -1584,6 +2523,9 @@ window.addEventListener(
           );
 
         }
+
+
+        await loadMyProfile();
 
 
         enterChat();
