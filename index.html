@@ -1,130 +1,198 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111b2b">
-<title>Cinsel Sohbet</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111b2b">
+  <title>Cinsel Sohbet</title>
 
-<style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-:root{
-  --navy:#111b2b;
-  --navy2:#19263a;
-  --pink:#e83e8c;
-  --pink2:#fff0f7;
-  --white:#fff;
-  --bg:#f4f6f9;
-  --text:#202735;
-  --muted:#7b8494;
-  --border:#e5e8ed;
-  --green:#22c55e;
-}
+    :root {
+      --navy: #111b2b;
+      --navy-light: #1c2a40;
+      --pink: #e83e8c;
+      --pink-light: #fff0f7;
+      --white: #ffffff;
+      --bg: #f5f7fa;
+      --text: #202735;
+      --muted: #7b8494;
+      --border: #e5e8ed;
+      --green: #22c55e;
+    }
 
-html,body{
-  width:100%;
-  min-height:100%;
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-body{
-  overflow-x:hidden;
-}
+    body {
+      overflow-x: hidden;
+    }
 
-button,input{
-  font:inherit;
-}
+    button,
+    input {
+      font: inherit;
+    }
 
-button{
-  cursor:pointer;
-  border:0;
-}
+    button {
+      border: 0;
+      cursor: pointer;
+    }
 
-/* ÜST BAR */
+    /* ÜST BAR */
 
-.topbar{
-  height:64px;
-  background:var(--navy);
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 24px;
-}
+    .topbar {
+      height: 64px;
+      background: var(--navy);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
 
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:21px;
-  font-weight:700;
-}
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 21px;
+      font-weight: 700;
+    }
 
-.logo-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:var(--pink);
-  box-shadow:0 0 12px rgba(232,62,140,.7);
-}
+    .logo-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--pink);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(232, 62, 140, 0.7);
+    }
 
-.top-actions{
-  display:flex;
-  gap:8px;
-}
+    .top-actions {
+      display: flex;
+      gap: 8px;
+    }
 
-.icon-btn,
-.menu-btn{
-  width:40px;
-  height:40px;
-  border-radius:8px;
-  color:white;
-  background:transparent;
-  font-size:19px;
-}
+    .icon-btn,
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: transparent;
+      color: white;
+      font-size: 19px;
+    }
 
-.icon-btn:hover,
-.menu-btn:hover{
-  background:rgba(255,255,255,.08);
-}
+    .icon-btn:hover,
+    .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
 
-.menu-btn{
-  display:none;
-}
+    .menu-btn {
+      display: none;
+    }
 
-/* GİRİŞ */
+    /* GİRİŞ */
 
-.login-page{
-  min-height:calc(100vh - 64px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:30px 15px;
-}
+    .login-page {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 15px;
+    }
 
-.login-card{
-  width:100%;
-  max-width:430px;
-  background:white;
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:34px;
-  box-shadow:0 15px 45px rgba(17,27,43,.09);
-}
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 34px;
+      box-shadow: 0 15px 45px rgba(17, 27, 43, 0.09);
+    }
 
-.login-logo{
-  text-align:center;
-  margin-bottom:28px;
-}
+    .login-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
 
-.heart{
-  width:64px;
-  height:64px;
-  margin:
+    .heart {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 15px;
+      border-radius: 18px;
+      background: var(--pink-light);
+      color: var(--pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 31px;
+    }
+
+    .login-logo h1 {
+      font-size: 28px;
+      color: var(--navy);
+      margin-bottom: 7px;
+    }
+
+    .login-logo p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .login-card label,
+    .gender-title {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .login-card input[type="text"],
+    .login-card input[type="password"] {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      outline: none;
+      padding: 0 14px;
+      margin-bottom: 18px;
+      background: #fafbfc;
+    }
+
+    .login-card input[type="text"]:focus,
+    .login-card input[type="password"]:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.08);
+    }
+
+    .gender-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .gender-option {
+      height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .gender-option input
