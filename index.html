@@ -1004,6 +1004,14 @@ let onlineRealtimeChannel = null;
 
 
 /* =========================
+   GÖSTERİLEN MESAJLAR
+========================= */
+
+const displayedMessageIds =
+  new Set();
+
+
+/* =========================
    GİRİŞ MESAJI
 ========================= */
 
@@ -1172,6 +1180,7 @@ function updateAdminButton(){
 
     button.style.display =
       "none";
+
   }
 }
 
@@ -1265,8 +1274,6 @@ async function registerUser(){
       );
 
 
-    /* ÖNCE GİRİŞ DENE */
-
     const loginResult =
       await supabaseClient
         .auth
@@ -1296,8 +1303,6 @@ async function registerUser(){
       return;
     }
 
-
-    /* GİRİŞ YOKSA KAYIT DENE */
 
     const registerResult =
       await supabaseClient
@@ -1462,6 +1467,9 @@ async function loadMessages(){
 
   box.innerHTML = "";
 
+  displayedMessageIds.clear();
+
+
   const result =
     await supabaseClient
       .from("messages")
@@ -1494,13 +1502,10 @@ async function loadMessages(){
   }
 
 
-  if(!result.data ||
-     result.data.length === 0){
-
-    box.innerHTML =
-      '<div class="message">' +
-      '<b>Sistem:</b> Bu odada henüz mesaj yok.' +
-      '</div>';
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
 
     return;
   }
@@ -1528,6 +1533,29 @@ function addMessageToScreen(message){
     document.getElementById(
       "messages"
     );
+
+
+  /*
+     Aynı mesajı iki kez gösterme
+  */
+
+  if(message.id){
+
+    if(
+      displayedMessageIds.has(
+        message.id
+      )
+    ){
+
+      return;
+
+    }
+
+    displayedMessageIds.add(
+      message.id
+    );
+
+  }
 
 
   const div =
@@ -1567,7 +1595,8 @@ function addMessageToScreen(message){
 
   const date =
     new Date(
-      message.created_at
+      message.created_at ||
+      Date.now()
     );
 
 
@@ -1581,13 +1610,22 @@ function addMessageToScreen(message){
     );
 
 
-  div.appendChild(username);
+  div.appendChild(
+    username
+  );
 
-  div.appendChild(text);
+  div.appendChild(
+    text
+  );
 
-  div.appendChild(time);
+  div.appendChild(
+    time
+  );
 
-  box.appendChild(div);
+
+  box.appendChild(
+    div
+  );
 
 
   box.scrollTop =
@@ -1627,45 +1665,98 @@ async function sendMessage(){
   input.disabled = true;
 
 
-  const result =
-    await supabaseClient
-      .from("messages")
-      .insert({
+  try{
 
-        room:
-          currentRoom,
+    const newMessage = {
 
-        username:
-          currentUsername,
+      room:
+        currentRoom,
 
-        message:
-          text
+      username:
+        currentUsername,
 
-      })
-      .select()
-      .single();
+      message:
+        text
+
+    };
 
 
-  input.disabled = false;
+    const result =
+      await supabaseClient
+        .from("messages")
+        .insert(
+          newMessage
+        )
+        .select()
+        .single();
 
 
-  if(result.error){
+    if(result.error){
+
+      console.error(
+        "Mesaj gönderme:",
+        result.error
+      );
+
+      alert(
+        "Mesaj gönderilemedi: " +
+        result.error.message
+      );
+
+      return;
+    }
+
+
+    /*
+       Veritabanından dönen mesajı
+       hemen ekrana yaz.
+    */
+
+    if(result.data){
+
+      addMessageToScreen(
+        result.data
+      );
+
+    }else{
+
+      addMessageToScreen({
+
+        ...newMessage,
+
+        created_at:
+          new Date().toISOString()
+
+      });
+
+    }
+
+
+    input.value = "";
+
+    input.focus();
+
+
+  }catch(error){
 
     console.error(
-      "Mesaj gönderme:",
-      result.error
+      "Mesaj hatası:",
+      error
     );
 
     alert(
-      "Mesaj gönderilemedi: " +
-      result.error.message
+      "Mesaj gönderilirken hata oluştu: " +
+      error.message
     );
 
-    return;
+  }finally{
+
+    input.disabled = false;
+
+    input.focus();
+
   }
 
-
-  input.value = "";
 }
 
 
@@ -1707,6 +1798,7 @@ function startRealtime(){
       );
 
     realtimeChannel = null;
+
   }
 
 
@@ -1801,6 +1893,7 @@ async function joinOnlineUsers(){
   loadOnlineUsers();
 
   startOnlineRealtime();
+
 }
 
 
@@ -1869,7 +1962,9 @@ async function loadOnlineUsers(){
         user.username;
 
 
-      box.appendChild(div);
+      box.appendChild(
+        div
+      );
 
     }
   );
@@ -1892,6 +1987,7 @@ function startOnlineRealtime(){
 
     onlineRealtimeChannel =
       null;
+
   }
 
 
@@ -2164,8 +2260,6 @@ async function loadAdminUsers(){
         );
 
 
-      /* KULLANICI */
-
       const usernameTd =
         document.createElement(
           "td"
@@ -2176,8 +2270,6 @@ async function loadAdminUsers(){
         "-";
 
 
-      /* CİNSİYET */
-
       const genderTd =
         document.createElement(
           "td"
@@ -2187,8 +2279,6 @@ async function loadAdminUsers(){
         user.gender ||
         "-";
 
-
-      /* ROL */
 
       const roleTd =
         document.createElement(
@@ -2243,8 +2333,6 @@ async function loadAdminUsers(){
       );
 
 
-      /* TARİH */
-
       const dateTd =
         document.createElement(
           "td"
@@ -2270,8 +2358,6 @@ async function loadAdminUsers(){
 
       }
 
-
-      /* İŞLEM */
 
       const actionTd =
         document.createElement(
@@ -2497,6 +2583,7 @@ async function logout(){
 
       onlineRealtimeChannel =
         null;
+
     }
 
 
@@ -2509,6 +2596,7 @@ async function logout(){
 
       realtimeChannel =
         null;
+
     }
 
 
@@ -2550,6 +2638,9 @@ async function logout(){
   currentRole = "user";
 
   currentRoom = "#Cinsellik";
+
+
+  displayedMessageIds.clear();
 
 
   document
@@ -2655,7 +2746,7 @@ window.addEventListener(
         );
 
 
-        enterChat();
+        await enterChat();
 
       }
 
@@ -2694,7 +2785,9 @@ window.addEventListener(
 
       }catch(error){
 
-        console.error(error);
+        console.error(
+          error
+        );
 
       }
 
