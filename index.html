@@ -731,7 +731,6 @@ input:focus{
 
 <body>
 
-
 <!-- =========================
      HEADER
 ========================= -->
@@ -1504,6 +1503,10 @@ function updateAdminButton(){
     );
 
 
+  if(!button)
+    return;
+
+
   if(
     currentRole === "admin" ||
     currentRole === "moderator"
@@ -1815,6 +1818,8 @@ async function enterChat(){
       "block";
 
 
+  updateAdminButton();
+
   await loadMessages();
 
   startRealtime();
@@ -1960,6 +1965,18 @@ function addMessageToScreen(
 
   div.className =
     "message";
+
+
+  /* DÜZELTME:
+     Mesaj ID'sini DOM üzerinde sakla.
+  */
+
+  if(message.id){
+
+    div.dataset.messageId =
+      String(message.id);
+
+  }
 
 
   /*
@@ -2521,6 +2538,14 @@ function removeOptimisticMessage(
       messageKey
     ){
 
+      if(child.dataset.messageId){
+
+        displayedMessageIds.delete(
+          child.dataset.messageId
+        );
+
+      }
+
       child.remove();
 
       break;
@@ -2728,11 +2753,6 @@ function refreshSingleMessage(
 
   }
 
-
-  /*
-     ID'yi tekrar oluşturabilmek
-     için set'ten çıkar.
-  */
 
   displayedMessageIds.delete(
     message.id
@@ -3056,11 +3076,6 @@ async function deleteMessage(
   }
 
 
-  /*
-     Realtime UPDATE gelmezse
-     kendi ekranımızı da yenile.
-  */
-
   const box =
     document.getElementById(
       "messages"
@@ -3091,11 +3106,6 @@ async function deleteMessage(
     messageId
   );
 
-
-  /*
-     Mesajı tekrar veritabanından
-     bulup silindi olarak göster.
-  */
 
   const result2 =
     await supabaseClient
@@ -3433,6 +3443,12 @@ async function applyModeration(
     );
 
 
+  if(!durationElement || !reasonElement){
+
+    return;
+  }
+
+
   const duration =
     Number(
       durationElement.value
@@ -3454,11 +3470,6 @@ async function applyModeration(
 
 
   try{
-
-    /*
-       Kullanıcının profil ID'sini
-       bulmaya çalış.
-    */
 
     const profile =
       await supabaseClient
@@ -3765,6 +3776,10 @@ function closeAdminPanel(){
 
 async function loadAdminUsers(){
 
+  if(!isStaff())
+    return;
+
+
   const tbody =
     document.getElementById(
       "adminUsers"
@@ -4028,10 +4043,6 @@ async function loadAdminUsers(){
         "admin"
       ){
 
-        /*
-           MODERATÖR YETKİSİ
-        */
-
         if(
           user.role !==
           "moderator"
@@ -4100,10 +4111,6 @@ async function loadAdminUsers(){
         }
 
 
-        /*
-           BAN KALDIRMA
-        */
-
         const unbanButton =
           document.createElement(
             "button"
@@ -4132,10 +4139,6 @@ async function loadAdminUsers(){
           unbanButton
         );
 
-
-        /*
-           SUSTURMA KALDIRMA
-        */
 
         const unmuteButton =
           document.createElement(
@@ -4543,6 +4546,7 @@ window.addEventListener(
       }catch(error){
 
         console.error(
+          "Online çıkış:",
           error
         );
 
