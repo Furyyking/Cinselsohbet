@@ -4,20 +4,14 @@
 
 <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Cinsel Sohbet</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
 <style>
-
-/* =========================
-   GENEL
-========================= */
 
 *{
   box-sizing:border-box;
@@ -35,7 +29,6 @@ body{
 button{
   font-family:inherit;
 }
-
 
 /* =========================
    HEADER
@@ -80,7 +73,6 @@ button{
 .logout{
   background:#e83e8c;
 }
-
 
 /* =========================
    GİRİŞ
@@ -176,7 +168,6 @@ input:focus{
   min-height:20px;
   font-size:14px;
 }
-
 
 /* =========================
    CHAT
@@ -300,7 +291,6 @@ input:focus{
   margin-right:7px;
 }
 
-
 /* =========================
    ADMIN PANEL
 ========================= */
@@ -316,7 +306,7 @@ input:focus{
 
 .admin-container{
   width:94%;
-  max-width:1100px;
+  max-width:1200px;
   margin:25px auto;
 }
 
@@ -393,7 +383,7 @@ input:focus{
 .admin-table{
   width:100%;
   border-collapse:collapse;
-  min-width:650px;
+  min-width:850px;
 }
 
 .admin-table th,
@@ -447,6 +437,43 @@ input:focus{
   color:#aeb9ca;
 }
 
+/* =========================
+   YÖNETİM BUTONLARI
+========================= */
+
+.role-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.role-action{
+  border:0;
+  border-radius:6px;
+  padding:7px 9px;
+  color:#fff;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.make-moderator{
+  background:#1976d2;
+}
+
+.remove-moderator{
+  background:#e83e8c;
+}
+
+.role-action:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.self-admin{
+  color:#aeb9ca;
+  font-size:12px;
+}
 
 /* =========================
    MOBİL
@@ -502,7 +529,6 @@ input:focus{
     grid-template-columns:1fr;
   }
 }
-
 
 @media(max-width:600px){
 
@@ -592,9 +618,7 @@ input:focus{
 </style>
 </head>
 
-
 <body>
-
 
 <!-- =========================
      HEADER
@@ -632,8 +656,6 @@ input:focus{
 
 </div>
 
-
-
 <!-- =========================
      GİRİŞ
 ========================= -->
@@ -658,7 +680,6 @@ input:focus{
       placeholder="Şifre"
       autocomplete="current-password">
 
-
     <div class="gender">
 
       <button
@@ -669,7 +690,6 @@ input:focus{
         Kadın
 
       </button>
-
 
       <button
         type="button"
@@ -682,7 +702,6 @@ input:focus{
 
     </div>
 
-
     <button
       id="loginBtn"
       class="btn register"
@@ -693,7 +712,6 @@ input:focus{
 
     </button>
 
-
     <button
       class="btn guest"
       type="button"
@@ -703,14 +721,11 @@ input:focus{
 
     </button>
 
-
     <div id="loginMessage"></div>
 
   </div>
 
 </div>
-
-
 
 <!-- =========================
      CHAT
@@ -720,15 +735,11 @@ input:focus{
 
   <div class="chat-layout">
 
-
-    <!-- KANALLAR -->
-
     <aside class="sidebar">
 
       <div class="title">
         ODALAR
       </div>
-
 
       <div
         class="channel active"
@@ -738,7 +749,6 @@ input:focus{
 
       </div>
 
-
       <div
         class="channel"
         onclick="changeRoom('#sohbet',this)">
@@ -746,7 +756,6 @@ input:focus{
         #sohbet
 
       </div>
-
 
       <div
         class="channel"
@@ -756,7 +765,6 @@ input:focus{
 
       </div>
 
-
       <div
         class="channel"
         onclick="changeRoom('#oyun',this)">
@@ -764,7 +772,6 @@ input:focus{
         #oyun
 
       </div>
-
 
       <div
         class="channel"
@@ -776,10 +783,6 @@ input:focus{
 
     </aside>
 
-
-
-    <!-- ANA SOHBET -->
-
     <main class="main">
 
       <div
@@ -790,12 +793,10 @@ input:focus{
 
       </div>
 
-
       <div
         class="messages"
         id="messages">
       </div>
-
 
       <div class="send">
 
@@ -804,7 +805,6 @@ input:focus{
           type="text"
           placeholder="Mesajınızı yazın..."
           autocomplete="off">
-
 
         <button
           type="button"
@@ -817,10 +817,6 @@ input:focus{
       </div>
 
     </main>
-
-
-
-    <!-- KULLANICILAR -->
 
     <aside class="users">
 
@@ -836,8 +832,6 @@ input:focus{
 
 </div>
 
-
-
 <!-- =========================
      ADMIN PANEL
 ========================= -->
@@ -845,7 +839,6 @@ input:focus{
 <div id="adminPanel">
 
   <div class="admin-container">
-
 
     <div class="admin-header">
 
@@ -862,10 +855,6 @@ input:focus{
       </button>
 
     </div>
-
-
-
-    <!-- İSTATİSTİKLER -->
 
     <div class="admin-cards">
 
@@ -885,7 +874,6 @@ input:focus{
 
       </div>
 
-
       <div class="admin-card">
 
         <div class="admin-card-title">
@@ -901,7 +889,6 @@ input:focus{
         </div>
 
       </div>
-
 
       <div class="admin-card">
 
@@ -921,14 +908,9 @@ input:focus{
 
     </div>
 
-
-
-    <!-- KULLANICILAR -->
-
     <div class="admin-table-box">
 
-      <div
-        class="admin-table-title">
+      <div class="admin-table-title">
 
         Kullanıcı Yönetimi
 
@@ -943,7 +925,6 @@ input:focus{
 
       </div>
 
-
       <div class="admin-table-wrapper">
 
         <table class="admin-table">
@@ -952,31 +933,21 @@ input:focus{
 
             <tr>
 
-              <th>
-                Kullanıcı
-              </th>
+              <th>Kullanıcı</th>
 
-              <th>
-                Cinsiyet
-              </th>
+              <th>Cinsiyet</th>
 
-              <th>
-                Rol
-              </th>
+              <th>Rol</th>
 
-              <th>
-                Kayıt
-              </th>
+              <th>Kayıt</th>
+
+              <th>İşlem</th>
 
             </tr>
 
           </thead>
 
-
-          <tbody
-            id="adminUsers">
-
-          </tbody>
+          <tbody id="adminUsers"></tbody>
 
         </table>
 
@@ -988,8 +959,6 @@ input:focus{
 
 </div>
 
-
-
 <script>
 
 /* =========================
@@ -999,18 +968,14 @@ input:focus{
 const SUPABASE_URL =
   "https://kreezswhqbnxvosmbxmu.supabase.co";
 
-
 const SUPABASE_KEY =
   "sb_publishable_sx3jrzgB5jhpgC9OU2FkGw_8lvWCIti";
-
 
 const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
   );
-
-
 
 /* =========================
    DEĞİŞKENLER
@@ -1028,34 +993,24 @@ let realtimeChannel = null;
 
 let onlineRealtimeChannel = null;
 
-
-
 /* =========================
    GİRİŞ MESAJI
 ========================= */
 
-function showMessage(
-  text,
-  error=false
-){
+function showMessage(text,error=false){
 
   const box =
     document.getElementById(
       "loginMessage"
     );
 
-
-  box.textContent =
-    text;
-
+  box.textContent = text;
 
   box.style.color =
     error
       ? "#ff5c5c"
       : "#55e67a";
 }
-
-
 
 /* =========================
    CİNSİYET
@@ -1065,7 +1020,6 @@ function selectGender(button){
 
   selectedGender =
     button.dataset.gender;
-
 
   document
     .querySelectorAll(
@@ -1079,13 +1033,10 @@ function selectGender(button){
 
     });
 
-
   button.classList.add(
     "active"
   );
 }
-
-
 
 /* =========================
    EMAIL
@@ -1105,15 +1056,12 @@ function usernameEmail(username){
       .replace(/ç/g,"c")
       .replace(/[^a-z0-9]/g,"");
 
-
   return clean +
     "@cinselsohbet.com";
 }
 
-
-
 /* =========================
-   PROFİL BİLGİSİ
+   PROFİL
 ========================= */
 
 async function loadMyProfile(){
@@ -1123,22 +1071,20 @@ async function loadMyProfile(){
       .auth
       .getUser();
 
-
   if(
     userResult.error ||
     !userResult.data.user
   ){
 
-    currentRole =
-      "user";
+    currentRole = "user";
+
+    updateAdminButton();
 
     return;
   }
 
-
   const userId =
     userResult.data.user.id;
-
 
   const result =
     await supabaseClient
@@ -1152,7 +1098,6 @@ async function loadMyProfile(){
       )
       .maybeSingle();
 
-
   if(result.error){
 
     console.error(
@@ -1160,12 +1105,12 @@ async function loadMyProfile(){
       result.error
     );
 
-    currentRole =
-      "user";
+    currentRole = "user";
+
+    updateAdminButton();
 
     return;
   }
-
 
   if(result.data){
 
@@ -1173,10 +1118,7 @@ async function loadMyProfile(){
       result.data.role ||
       "user";
 
-
-    if(
-      result.data.username
-    ){
+    if(result.data.username){
 
       currentUsername =
         result.data.username;
@@ -1185,16 +1127,11 @@ async function loadMyProfile(){
         "username",
         currentUsername
       );
-
     }
-
   }
-
 
   updateAdminButton();
 }
-
-
 
 /* =========================
    ADMIN BUTONU
@@ -1206,7 +1143,6 @@ function updateAdminButton(){
     document.getElementById(
       "adminBtn"
     );
-
 
   if(
     currentRole === "admin" ||
@@ -1220,11 +1156,8 @@ function updateAdminButton(){
 
     button.style.display =
       "none";
-
   }
 }
-
-
 
 /* =========================
    GİRİŞ / KAYIT
@@ -1240,7 +1173,6 @@ async function registerUser(){
       .value
       .trim();
 
-
   const password =
     document
       .getElementById(
@@ -1248,12 +1180,10 @@ async function registerUser(){
       )
       .value;
 
-
   const button =
     document.getElementById(
       "loginBtn"
     );
-
 
   if(!username){
 
@@ -1265,7 +1195,6 @@ async function registerUser(){
     return;
   }
 
-
   if(username.length < 3){
 
     showMessage(
@@ -1275,7 +1204,6 @@ async function registerUser(){
 
     return;
   }
-
 
   if(!password){
 
@@ -1287,7 +1215,6 @@ async function registerUser(){
     return;
   }
 
-
   if(password.length < 6){
 
     showMessage(
@@ -1298,19 +1225,14 @@ async function registerUser(){
     return;
   }
 
-
-  button.disabled =
-    true;
-
+  button.disabled = true;
 
   button.textContent =
     "Bekleyin...";
 
-
   showMessage(
     "Giriş yapılıyor..."
   );
-
 
   try{
 
@@ -1318,9 +1240,6 @@ async function registerUser(){
       usernameEmail(
         username
       );
-
-
-    /* ÖNCE GİRİŞ */
 
     const loginResult =
       await supabaseClient
@@ -1333,29 +1252,22 @@ async function registerUser(){
 
         });
 
-
     if(!loginResult.error){
 
       currentUsername =
         username;
-
 
       localStorage.setItem(
         "username",
         username
       );
 
-
       await loadMyProfile();
-
 
       enterChat();
 
       return;
     }
-
-
-    /* KAYIT */
 
     const registerResult =
       await supabaseClient
@@ -1382,7 +1294,6 @@ async function registerUser(){
 
         });
 
-
     if(registerResult.error){
 
       showMessage(
@@ -1397,7 +1308,6 @@ async function registerUser(){
       return;
     }
 
-
     if(
       !registerResult.data.session
     ){
@@ -1410,27 +1320,21 @@ async function registerUser(){
       return;
     }
 
-
     currentUsername =
       username;
-
 
     localStorage.setItem(
       "username",
       username
     );
 
-
     await loadMyProfile();
 
-
     enterChat();
-
 
   }catch(error){
 
     console.error(error);
-
 
     showMessage(
       "Hata: " +
@@ -1443,13 +1347,10 @@ async function registerUser(){
     button.disabled =
       false;
 
-
     button.textContent =
       "Sohbete Gir";
   }
 }
-
-
 
 /* =========================
    MİSAFİR
@@ -1464,29 +1365,22 @@ function guestLogin(){
       90000
     );
 
-
   currentUsername =
     "Misafir" +
     number;
 
-
   currentRole =
     "guest";
-
 
   localStorage.setItem(
     "username",
     currentUsername
   );
 
-
   updateAdminButton();
-
 
   enterChat();
 }
-
-
 
 /* =========================
    CHAT'E GİR
@@ -1495,28 +1389,19 @@ function guestLogin(){
 function enterChat(){
 
   document
-    .getElementById(
-      "login"
-    )
+    .getElementById("login")
     .style.display =
       "none";
 
-
   document
-    .getElementById(
-      "chat"
-    )
+    .getElementById("chat")
     .style.display =
       "block";
 
-
   document
-    .getElementById(
-      "logoutBtn"
-    )
+    .getElementById("logoutBtn")
     .style.display =
       "block";
-
 
   loadMessages();
 
@@ -1524,8 +1409,6 @@ function enterChat(){
 
   joinOnlineUsers();
 }
-
-
 
 /* =========================
    MESAJLARI YÜKLE
@@ -1538,10 +1421,7 @@ async function loadMessages(){
       "messages"
     );
 
-
-  box.innerHTML =
-    "";
-
+  box.innerHTML = "";
 
   const result =
     await supabaseClient
@@ -1558,7 +1438,6 @@ async function loadMessages(){
         }
       );
 
-
   if(result.error){
 
     console.error(
@@ -1566,16 +1445,13 @@ async function loadMessages(){
       result.error
     );
 
-
     box.innerHTML =
       '<div class="message">' +
       '<b>Sistem:</b> Mesajlar yüklenemedi.' +
       '</div>';
 
-
     return;
   }
-
 
   result.data.forEach(
     message=>{
@@ -1588,42 +1464,33 @@ async function loadMessages(){
   );
 }
 
-
-
 /* =========================
    MESAJI EKRANA EKLE
 ========================= */
 
-function addMessageToScreen(
-  message
-){
+function addMessageToScreen(message){
 
   const box =
     document.getElementById(
       "messages"
     );
 
-
   const div =
     document.createElement(
       "div"
     );
 
-
   div.className =
     "message";
-
 
   const username =
     document.createElement(
       "b"
     );
 
-
   username.textContent =
     message.username +
     ":";
-
 
   const text =
     document.createTextNode(
@@ -1631,22 +1498,18 @@ function addMessageToScreen(
       message.message
     );
 
-
   const time =
     document.createElement(
       "span"
     );
 
-
   time.className =
     "message-time";
-
 
   const date =
     new Date(
       message.created_at
     );
-
 
   time.textContent =
     date.toLocaleTimeString(
@@ -1657,32 +1520,17 @@ function addMessageToScreen(
       }
     );
 
+  div.appendChild(username);
 
-  div.appendChild(
-    username
-  );
+  div.appendChild(text);
 
+  div.appendChild(time);
 
-  div.appendChild(
-    text
-  );
-
-
-  div.appendChild(
-    time
-  );
-
-
-  box.appendChild(
-    div
-  );
-
+  box.appendChild(div);
 
   box.scrollTop =
     box.scrollHeight;
 }
-
-
 
 /* =========================
    MESAJ GÖNDER
@@ -1695,14 +1543,11 @@ async function sendMessage(){
       "messageInput"
     );
 
-
   const text =
     input.value.trim();
 
-
   if(!text)
     return;
-
 
   if(!currentUsername){
 
@@ -1713,10 +1558,7 @@ async function sendMessage(){
     return;
   }
 
-
-  input.disabled =
-    true;
-
+  input.disabled = true;
 
   const result =
     await supabaseClient
@@ -1736,10 +1578,7 @@ async function sendMessage(){
       .select()
       .single();
 
-
-  input.disabled =
-    false;
-
+  input.disabled = false;
 
   if(result.error){
 
@@ -1748,22 +1587,16 @@ async function sendMessage(){
       result.error
     );
 
-
     alert(
       "Mesaj gönderilemedi: " +
       result.error.message
     );
 
-
     return;
   }
 
-
-  input.value =
-    "";
+  input.value = "";
 }
-
-
 
 /* =========================
    MESAJ REALTIME
@@ -1777,16 +1610,13 @@ function startRealtime(){
       .removeChannel(
         realtimeChannel
       );
-
   }
-
 
   realtimeChannel =
     supabaseClient
       .channel(
         "messages-channel"
       )
-
       .on(
         "postgres_changes",
         {
@@ -1804,7 +1634,6 @@ function startRealtime(){
           const message =
             payload.new;
 
-
           if(
             message.room ===
             currentRoom
@@ -1813,16 +1642,11 @@ function startRealtime(){
             addMessageToScreen(
               message
             );
-
           }
-
         }
       )
-
       .subscribe();
 }
-
-
 
 /* =========================
    ONLINE KULLANICI
@@ -1833,7 +1657,6 @@ async function joinOnlineUsers(){
   if(!currentUsername)
     return;
 
-
   await supabaseClient
     .from("online_users")
     .delete()
@@ -1841,7 +1664,6 @@ async function joinOnlineUsers(){
       "username",
       currentUsername
     );
-
 
   const result =
     await supabaseClient
@@ -1858,7 +1680,6 @@ async function joinOnlineUsers(){
       .select()
       .single();
 
-
   if(result.error){
 
     console.error(
@@ -1869,13 +1690,10 @@ async function joinOnlineUsers(){
     return;
   }
 
-
   loadOnlineUsers();
 
   startOnlineRealtime();
 }
-
-
 
 /* =========================
    ONLINE LİSTE
@@ -1888,16 +1706,13 @@ async function loadOnlineUsers(){
       "onlineUsers"
     );
 
-
   if(!box)
     return;
-
 
   const result =
     await supabaseClient
       .from("online_users")
       .select("*");
-
 
   if(result.error){
 
@@ -1909,642 +1724,7 @@ async function loadOnlineUsers(){
     return;
   }
 
-
-  box.innerHTML =
-    "";
-
+  box.innerHTML = "";
 
   result.data.forEach(
-    user=>{
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.className =
-        "user online";
-
-
-      div.textContent =
-        user.username;
-
-
-      box.appendChild(
-        div
-      );
-
-    }
-  );
-}
-
-
-
-/* =========================
-   ONLINE REALTIME
-========================= */
-
-function startOnlineRealtime(){
-
-  if(onlineRealtimeChannel){
-
-    supabaseClient
-      .removeChannel(
-        onlineRealtimeChannel
-      );
-
-  }
-
-
-  onlineRealtimeChannel =
-    supabaseClient
-      .channel(
-        "online-users-channel"
-      )
-
-      .on(
-        "postgres_changes",
-        {
-
-          event:"*",
-
-          schema:"public",
-
-          table:"online_users"
-
-        },
-
-        function(){
-
-          loadOnlineUsers();
-
-        }
-      )
-
-      .subscribe();
-}
-
-
-
-/* =========================
-   ODA DEĞİŞTİR
-========================= */
-
-async function changeRoom(
-  roomName,
-  button
-){
-
-  currentRoom =
-    roomName;
-
-
-  document
-    .getElementById(
-      "roomTitle"
-    )
-    .textContent =
-      roomName;
-
-
-  document
-    .querySelectorAll(
-      ".channel"
-    )
-    .forEach(room=>{
-
-      room.classList.remove(
-        "active"
-      );
-
-    });
-
-
-  button.classList.add(
-    "active"
-  );
-
-
-  await loadMessages();
-
-
-  if(currentUsername){
-
-    await supabaseClient
-      .from("online_users")
-      .update({
-
-        room:
-          currentRoom
-
-      })
-      .eq(
-        "username",
-        currentUsername
-      );
-
-  }
-
-
-  loadOnlineUsers();
-}
-
-
-
-/* =========================
-   ADMIN PANELİ AÇ
-========================= */
-
-async function openAdminPanel(){
-
-  if(
-    currentRole !== "admin" &&
-    currentRole !== "moderator"
-  ){
-
-    alert(
-      "Bu bölüme erişim yetkiniz yok."
-    );
-
-    return;
-  }
-
-
-  document
-    .getElementById(
-      "adminPanel"
-    )
-    .style.display =
-      "block";
-
-
-  await loadAdminUsers();
-}
-
-
-
-/* =========================
-   ADMIN PANELİ KAPAT
-========================= */
-
-function closeAdminPanel(){
-
-  document
-    .getElementById(
-      "adminPanel"
-    )
-    .style.display =
-      "none";
-}
-
-
-
-/* =========================
-   ADMIN KULLANICILARI
-========================= */
-
-async function loadAdminUsers(){
-
-  const tbody =
-    document.getElementById(
-      "adminUsers"
-    );
-
-
-  tbody.innerHTML =
-    '<tr><td colspan="4" style="text-align:center;padding:25px">Yükleniyor...</td></tr>';
-
-
-  const result =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,gender,role,created_at"
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
-
-
-  if(result.error){
-
-    console.error(
-      "Admin kullanıcıları:",
-      result.error
-    );
-
-
-    tbody.innerHTML =
-      '<tr><td colspan="4" style="text-align:center;padding:25px;color:#ff5c5c">Kullanıcılar yüklenemedi.</td></tr>';
-
-
-    return;
-  }
-
-
-  const users =
-    result.data || [];
-
-
-  document
-    .getElementById(
-      "totalUsers"
-    )
-    .textContent =
-      users.length;
-
-
-  document
-    .getElementById(
-      "totalAdmins"
-    )
-    .textContent =
-      users.filter(
-        user =>
-          user.role ===
-          "admin"
-      ).length;
-
-
-  document
-    .getElementById(
-      "totalModerators"
-    )
-    .textContent =
-      users.filter(
-        user =>
-          user.role ===
-          "moderator"
-      ).length;
-
-
-  if(!users.length){
-
-    tbody.innerHTML =
-      '<tr><td colspan="4" class="admin-empty">Henüz kullanıcı yok.</td></tr>';
-
-    return;
-  }
-
-
-  tbody.innerHTML =
-    "";
-
-
-  users.forEach(
-    user=>{
-
-      const tr =
-        document.createElement(
-          "tr"
-        );
-
-
-      const username =
-        document.createElement(
-          "td"
-        );
-
-
-      username.textContent =
-        user.username ||
-        "Kullanıcı";
-
-
-      const gender =
-        document.createElement(
-          "td"
-        );
-
-
-      gender.textContent =
-        user.gender ||
-        "-";
-
-
-      const role =
-        document.createElement(
-          "td"
-        );
-
-
-      const roleSpan =
-        document.createElement(
-          "span"
-        );
-
-
-      roleSpan.className =
-        "role";
-
-
-      if(
-        user.role ===
-        "admin"
-      ){
-
-        roleSpan.classList.add(
-          "role-admin"
-        );
-
-        roleSpan.textContent =
-          "Admin";
-
-      }else if(
-        user.role ===
-        "moderator"
-      ){
-
-        roleSpan.classList.add(
-          "role-moderator"
-        );
-
-        roleSpan.textContent =
-          "Moderatör";
-
-      }else{
-
-        roleSpan.classList.add(
-          "role-user"
-        );
-
-        roleSpan.textContent =
-          "Kullanıcı";
-
-      }
-
-
-      role.appendChild(
-        roleSpan
-      );
-
-
-      const created =
-        document.createElement(
-          "td"
-        );
-
-
-      if(user.created_at){
-
-        created.textContent =
-          new Date(
-            user.created_at
-          ).toLocaleDateString(
-            "tr-TR"
-          );
-
-      }else{
-
-        created.textContent =
-          "-";
-
-      }
-
-
-      tr.appendChild(
-        username
-      );
-
-      tr.appendChild(
-        gender
-      );
-
-      tr.appendChild(
-        role
-      );
-
-      tr.appendChild(
-        created
-      );
-
-
-      tbody.appendChild(
-        tr
-      );
-
-    }
-  );
-}
-
-
-
-/* =========================
-   ENTER İLE MESAJ
-========================= */
-
-document.addEventListener(
-  "keydown",
-  function(event){
-
-    if(
-      event.key === "Enter" &&
-      document.activeElement &&
-      document.activeElement.id ===
-        "messageInput"
-    ){
-
-      event.preventDefault();
-
-      sendMessage();
-
-    }
-
-  }
-);
-
-
-
-/* =========================
-   ÇIKIŞ
-========================= */
-
-async function logout(){
-
-  if(currentUsername){
-
-    try{
-
-      await supabaseClient
-        .from("online_users")
-        .delete()
-        .eq(
-          "username",
-          currentUsername
-        );
-
-    }catch(error){
-
-      console.error(
-        "Online kullanıcı silme:",
-        error
-      );
-
-    }
-
-  }
-
-
-  if(realtimeChannel){
-
-    try{
-
-      await supabaseClient
-        .removeChannel(
-          realtimeChannel
-        );
-
-    }catch(error){
-
-      console.error(
-        error
-      );
-
-    }
-
-    realtimeChannel =
-      null;
-  }
-
-
-  if(onlineRealtimeChannel){
-
-    try{
-
-      await supabaseClient
-        .removeChannel(
-          onlineRealtimeChannel
-        );
-
-    }catch(error){
-
-      console.error(
-        error
-      );
-
-    }
-
-    onlineRealtimeChannel =
-      null;
-  }
-
-
-  try{
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-  }catch(error){
-
-    console.error(
-      "Çıkış hatası:",
-      error
-    );
-
-  }
-
-
-  localStorage.removeItem(
-    "username"
-  );
-
-
-  currentUsername =
-    "";
-
-  currentRole =
-    "user";
-
-  currentRoom =
-    "#Cinsellik";
-
-  selectedGender =
-    "";
-
-
-  location.reload();
-}
-
-
-
-/* =========================
-   OTURUM KONTROL
-========================= */
-
-window.addEventListener(
-  "load",
-  async function(){
-
-    try{
-
-      const result =
-        await supabaseClient
-          .auth
-          .getSession();
-
-
-      const session =
-        result.data.session;
-
-
-      if(session){
-
-        const savedUsername =
-          localStorage.getItem(
-            "username"
-          );
-
-
-        if(savedUsername){
-
-          currentUsername =
-            savedUsername;
-
-        }else{
-
-          currentUsername =
-            session.user
-              .user_metadata
-              ?.username ||
-            session.user
-              .email
-              ?.split("@")[0] ||
-            "Kullanıcı";
-
-
-          localStorage.setItem(
-            "username",
-            currentUsername
-          );
-
-        }
-
-
-        await loadMyProfile();
-
-
-        enterChat();
-
-      }
-
-    }catch(error){
-
-      console.error(
-        "Oturum kontrolü:",
-        error
-      );
-
-    }
-
-  }
-);
-
-</script>
-
-</body>
-</html>
+   
