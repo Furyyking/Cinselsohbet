@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111b2b">
+  <title>Cinsel Sohbet</title>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- ÜST MENÜ -->
+    <header class="topbar">
+      <div class="logo">
+        <span class="logo-dot"></span>
+        Cinsel Sohbet
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" title="Bildirimler">🔔</button>
+        <button class="menu-btn" id="menuBtn">☰</button>
+      </div>
+    </header>
+
+    <!-- GİRİŞ EKRANI -->
+    <main class="login-page" id="loginPage">
+      <div class="login-card">
+
+        <div class="login-logo">
+          <div class="heart">♥</div>
+          <h1>Cinsel Sohbet</h1>
+          <p>Yeni insanlarla tanış, sohbet et.</p>
+        </div>
+
+        <form id="loginForm">
+
+          <label for="username">Kullanıcı Adı</label>
+          <input
+            type="text"
+            id="username"
+            placeholder="Kullanıcı adınızı girin"
+            maxlength="20"
+            autocomplete="off"
+            required
+          >
+
+          <label for="password">Şifre</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Şifrenizi girin"
+            autocomplete="off"
+            required
+          >
+
+          <div class="gender-title">Cinsiyet</div>
+
+          <div class="gender-options">
+
+            <label class="gender-option female">
+              <input type="radio" name="gender" value="female" checked>
+              <span>♀</span>
+              Kadın
+            </label>
+
+            <label class="gender-option male">
+              <input type="radio" name="gender" value="male">
+              <span>♂</span>
+              Erkek
+            </label>
+
+          </div>
+
+          <button type="submit" class="login-btn">
+            GİRİŞ YAP
+          </button>
+
+        </form>
+
+        <div class="login-info">
+          <span>🔒</span>
+          Bilgileriniz gizli tutulur.
+        </div>
+
+      </div>
+    </main>
+
+
+    <!-- SOHBET PANELİ -->
+    <main class="chat-page" id="chatPage">
+
+      <!-- SOL MENÜ -->
+      <aside class="sidebar" id="sidebar">
+
+        <div class="user-box">
+          <div class="user-name" id="currentUser">Kullanıcı</div>
+          <div class="online-status">
+            <span></span> Çevrimi
