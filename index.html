@@ -244,6 +244,7 @@ input:focus{
   margin-bottom:10px;
   border-radius:9px;
   word-wrap:break-word;
+  position:relative;
 }
 
 .message b{
@@ -254,6 +255,40 @@ input:focus{
   color:#8190a6;
   font-size:11px;
   margin-left:8px;
+}
+
+.deleted-message{
+  color:#8190a6;
+  font-style:italic;
+}
+
+.message-actions{
+  display:inline-flex;
+  gap:5px;
+  margin-left:10px;
+  vertical-align:middle;
+}
+
+.message-action{
+  border:0;
+  border-radius:5px;
+  padding:4px 7px;
+  color:#fff;
+  font-size:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.message-delete{
+  background:#d32f2f;
+}
+
+.message-mute{
+  background:#f57c00;
+}
+
+.message-ban{
+  background:#8e0000;
 }
 
 .send{
@@ -384,7 +419,7 @@ input:focus{
 .admin-table{
   width:100%;
   border-collapse:collapse;
-  min-width:850px;
+  min-width:1050px;
 }
 
 .admin-table th,
@@ -438,10 +473,6 @@ input:focus{
   color:#aeb9ca;
 }
 
-/* =========================
-   YÖNETİM BUTONLARI
-========================= */
-
 .role-actions{
   display:flex;
   gap:6px;
@@ -466,14 +497,87 @@ input:focus{
   background:#e83e8c;
 }
 
-.role-action:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
-
 .self-admin{
   color:#aeb9ca;
   font-size:12px;
+}
+
+/* =========================
+   MODERASYON MENÜSÜ
+========================= */
+
+.moderation-box{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:92%;
+  max-width:360px;
+  background:#1c2a40;
+  border:1px solid #40516a;
+  border-radius:14px;
+  padding:20px;
+  z-index:3000;
+  box-shadow:0 20px 60px #000b;
+}
+
+.moderation-box h3{
+  color:#e83e8c;
+  margin-bottom:15px;
+}
+
+.moderation-box label{
+  display:block;
+  color:#aeb9ca;
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+.moderation-box select,
+.moderation-box textarea{
+  width:100%;
+  padding:11px;
+  margin-bottom:12px;
+  border:1px solid #40516a;
+  border-radius:7px;
+  background:#111b2b;
+  color:#fff;
+  outline:none;
+}
+
+.moderation-box textarea{
+  min-height:75px;
+  resize:vertical;
+}
+
+.moderation-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.moderation-buttons button{
+  flex:1;
+  padding:11px;
+  border:0;
+  border-radius:7px;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.moderation-confirm{
+  background:#e83e8c;
+}
+
+.moderation-cancel{
+  background:#40516a;
+}
+
+.moderation-overlay{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:2999;
 }
 
 /* =========================
@@ -529,6 +633,7 @@ input:focus{
   .admin-cards{
     grid-template-columns:1fr;
   }
+
 }
 
 @media(max-width:600px){
@@ -614,12 +719,22 @@ input:focus{
     font-size:12px;
   }
 
+  .message-actions{
+    display:flex;
+    margin:8px 0 0 0;
+  }
+
 }
 
 </style>
 </head>
 
 <body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <div class="header">
 
@@ -653,6 +768,10 @@ input:focus{
 
 </div>
 
+
+<!-- =========================
+     GİRİŞ
+========================= -->
 
 <div id="login">
 
@@ -721,6 +840,10 @@ input:focus{
 
 </div>
 
+
+<!-- =========================
+     CHAT
+========================= -->
 
 <div id="chat">
 
@@ -825,6 +948,10 @@ input:focus{
 
 </div>
 
+
+<!-- =========================
+     ADMIN PANEL
+========================= -->
 
 <div id="adminPanel">
 
@@ -994,17 +1121,35 @@ const recentLocalMessages =
 
 
 /* =========================
+   YARDIMCI
+========================= */
+
+function isStaff(){
+
+  return (
+    currentRole === "admin" ||
+    currentRole === "moderator"
+  );
+
+}
+
+
+/* =========================
    GİRİŞ MESAJI
 ========================= */
 
-function showMessage(text,error=false){
+function showMessage(
+  text,
+  error=false
+){
 
   const box =
     document.getElementById(
       "loginMessage"
     );
 
-  box.textContent = text;
+  box.textContent =
+    text;
 
   box.style.color =
     error
@@ -1026,13 +1171,15 @@ function selectGender(button){
     .querySelectorAll(
       ".gender button"
     )
-    .forEach(btn=>{
+    .forEach(
+      btn=>{
 
-      btn.classList.remove(
-        "active"
-      );
+        btn.classList.remove(
+          "active"
+        );
 
-    });
+      }
+    );
 
   button.classList.add(
     "active"
@@ -1064,6 +1211,204 @@ function usernameEmail(username){
 
 
 /* =========================
+   BAN KONTROLÜ
+========================= */
+
+async function checkBan(
+  username
+){
+
+  if(!username)
+    return false;
+
+
+  const result =
+    await supabaseClient
+      .from("banned_users")
+      .select(
+        "id,username,reason,expires_at"
+      )
+      .eq(
+        "username",
+        username
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .limit(1);
+
+
+  if(result.error){
+
+    console.error(
+      "Ban kontrolü:",
+      result.error
+    );
+
+    return false;
+  }
+
+
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
+
+    return false;
+  }
+
+
+  const ban =
+    result.data[0];
+
+
+  if(
+    ban.expires_at &&
+    new Date(ban.expires_at)
+      .getTime() <= Date.now()
+  ){
+
+    await supabaseClient
+      .from("banned_users")
+      .delete()
+      .eq(
+        "id",
+        ban.id
+      );
+
+    return false;
+  }
+
+
+  alert(
+    "Bu kullanıcı banlı.\n\n" +
+    "Sebep: " +
+    (ban.reason || "Belirtilmedi") +
+    "\n\nBitiş: " +
+    formatDateTime(
+      ban.expires_at
+    )
+  );
+
+
+  return true;
+}
+
+
+/* =========================
+   SUSTURMA KONTROLÜ
+========================= */
+
+async function checkMute(
+  username
+){
+
+  if(!username)
+    return false;
+
+
+  const result =
+    await supabaseClient
+      .from("muted_users")
+      .select(
+        "id,username,reason,expires_at"
+      )
+      .eq(
+        "username",
+        username
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .limit(1);
+
+
+  if(result.error){
+
+    console.error(
+      "Susturma kontrolü:",
+      result.error
+    );
+
+    return false;
+  }
+
+
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
+
+    return false;
+  }
+
+
+  const mute =
+    result.data[0];
+
+
+  if(
+    mute.expires_at &&
+    new Date(mute.expires_at)
+      .getTime() <= Date.now()
+  ){
+
+    await supabaseClient
+      .from("muted_users")
+      .delete()
+      .eq(
+        "id",
+        mute.id
+      );
+
+    return false;
+  }
+
+
+  alert(
+    "Susturuldunuz.\n\n" +
+    "Sebep: " +
+    (mute.reason || "Belirtilmedi") +
+    "\n\nBitiş: " +
+    formatDateTime(
+      mute.expires_at
+    )
+  );
+
+
+  return true;
+}
+
+
+/* =========================
+   TARİH
+========================= */
+
+function formatDateTime(
+  value
+){
+
+  if(!value)
+    return "Belirsiz";
+
+
+  const date =
+    new Date(value);
+
+
+  return date.toLocaleString(
+    "tr-TR"
+  );
+}
+
+
+/* =========================
    PROFİL
 ========================= */
 
@@ -1079,15 +1424,18 @@ async function loadMyProfile(){
     !userResult.data.user
   ){
 
-    currentRole = "user";
+    currentRole =
+      "user";
 
     updateAdminButton();
 
     return;
   }
 
+
   const userId =
     userResult.data.user.id;
+
 
   const result =
     await supabaseClient
@@ -1101,6 +1449,7 @@ async function loadMyProfile(){
       )
       .maybeSingle();
 
+
   if(result.error){
 
     console.error(
@@ -1108,18 +1457,21 @@ async function loadMyProfile(){
       result.error
     );
 
-    currentRole = "user";
+    currentRole =
+      "user";
 
     updateAdminButton();
 
     return;
   }
 
+
   if(result.data){
 
     currentRole =
       result.data.role ||
       "user";
+
 
     if(result.data.username){
 
@@ -1135,6 +1487,7 @@ async function loadMyProfile(){
 
   }
 
+
   updateAdminButton();
 }
 
@@ -1149,6 +1502,7 @@ function updateAdminButton(){
     document.getElementById(
       "adminBtn"
     );
+
 
   if(
     currentRole === "admin" ||
@@ -1181,12 +1535,14 @@ async function registerUser(){
       .value
       .trim();
 
+
   const password =
     document
       .getElementById(
         "password"
       )
       .value;
+
 
   const button =
     document.getElementById(
@@ -1238,10 +1594,12 @@ async function registerUser(){
   }
 
 
-  button.disabled = true;
+  button.disabled =
+    true;
 
   button.textContent =
     "Bekleyin...";
+
 
   showMessage(
     "Giriş yapılıyor..."
@@ -1273,10 +1631,28 @@ async function registerUser(){
       currentUsername =
         username;
 
+
       localStorage.setItem(
         "username",
         username
       );
+
+
+      const banned =
+        await checkBan(
+          currentUsername
+        );
+
+
+      if(banned){
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+        return;
+      }
+
 
       await loadMyProfile();
 
@@ -1343,10 +1719,12 @@ async function registerUser(){
     currentUsername =
       username;
 
+
     localStorage.setItem(
       "username",
       username
     );
+
 
     await loadMyProfile();
 
@@ -1355,7 +1733,9 @@ async function registerUser(){
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      error
+    );
 
     showMessage(
       "Hata: " +
@@ -1380,7 +1760,7 @@ async function registerUser(){
    MİSAFİR
 ========================= */
 
-function guestLogin(){
+async function guestLogin(){
 
   const number =
     Math.floor(
@@ -1389,21 +1769,25 @@ function guestLogin(){
       90000
     );
 
+
   currentUsername =
     "Misafir" +
     number;
 
+
   currentRole =
     "guest";
+
 
   localStorage.setItem(
     "username",
     currentUsername
   );
 
+
   updateAdminButton();
 
-  enterChat();
+  await enterChat();
 }
 
 
@@ -1418,21 +1802,25 @@ async function enterChat(){
     .style.display =
       "none";
 
+
   document
     .getElementById("chat")
     .style.display =
       "block";
+
 
   document
     .getElementById("logoutBtn")
     .style.display =
       "block";
 
+
   await loadMessages();
 
   startRealtime();
 
   await joinOnlineUsers();
+
 }
 
 
@@ -1447,7 +1835,10 @@ async function loadMessages(){
       "messages"
     );
 
-  box.innerHTML = "";
+
+  box.innerHTML =
+    "";
+
 
   displayedMessageIds.clear();
 
@@ -1474,6 +1865,7 @@ async function loadMessages(){
       "Mesaj yükleme:",
       result.error
     );
+
 
     box.innerHTML =
       '<div class="message">' +
@@ -1502,6 +1894,7 @@ async function loadMessages(){
 
     }
   );
+
 }
 
 
@@ -1509,7 +1902,9 @@ async function loadMessages(){
    MESAJ ANAHTARI
 ========================= */
 
-function getMessageKey(message){
+function getMessageKey(
+  message
+){
 
   return [
     message.room || "",
@@ -1524,7 +1919,9 @@ function getMessageKey(message){
    MESAJI EKRANA EKLE
 ========================= */
 
-function addMessageToScreen(message){
+function addMessageToScreen(
+  message
+){
 
   const box =
     document.getElementById(
@@ -1555,33 +1952,52 @@ function addMessageToScreen(message){
   }
 
 
-  const messageKey =
-    getMessageKey(message);
-
-  const localTime =
-    recentLocalMessages.get(
-      messageKey
-    );
-
-
-  if(
-    message.id &&
-    localTime &&
-    Date.now() - localTime < 10000
-  ){
-
-    return;
-
-  }
-
-
   const div =
     document.createElement(
       "div"
     );
 
+
   div.className =
     "message";
+
+
+  /*
+     SİLİNMİŞ MESAJ
+  */
+
+  if(message.deleted){
+
+    const deleted =
+      document.createElement(
+        "span"
+      );
+
+
+    deleted.className =
+      "deleted-message";
+
+
+    deleted.textContent =
+      "🗑️ Mesaj moderasyon tarafından silindi.";
+
+
+    div.appendChild(
+      deleted
+    );
+
+
+    box.appendChild(
+      div
+    );
+
+
+    box.scrollTop =
+      box.scrollHeight;
+
+
+    return;
+  }
 
 
   const username =
@@ -1589,9 +2005,15 @@ function addMessageToScreen(message){
       "b"
     );
 
+
   username.textContent =
     (message.username || "Bilinmeyen") +
     ":";
+
+
+  div.appendChild(
+    username
+  );
 
 
   const text =
@@ -1601,10 +2023,16 @@ function addMessageToScreen(message){
     );
 
 
+  div.appendChild(
+    text
+  );
+
+
   const time =
     document.createElement(
       "span"
     );
+
 
   time.className =
     "message-time";
@@ -1628,16 +2056,135 @@ function addMessageToScreen(message){
 
 
   div.appendChild(
-    username
-  );
-
-  div.appendChild(
-    text
-  );
-
-  div.appendChild(
     time
   );
+
+
+  /*
+     MODERATÖR / ADMIN BUTONLARI
+  */
+
+  if(
+    isStaff() &&
+    message.id
+  ){
+
+    const actions =
+      document.createElement(
+        "span"
+      );
+
+
+    actions.className =
+      "message-actions";
+
+
+    const deleteButton =
+      document.createElement(
+        "button"
+      );
+
+
+    deleteButton.className =
+      "message-action message-delete";
+
+
+    deleteButton.textContent =
+      "🗑️ Sil";
+
+
+    deleteButton.onclick =
+      function(){
+
+        deleteMessage(
+          message.id
+        );
+
+      };
+
+
+    actions.appendChild(
+      deleteButton
+    );
+
+
+    /*
+       Başka kullanıcıya işlem
+    */
+
+    if(
+      message.username &&
+      message.username !==
+      currentUsername
+    ){
+
+      const muteButton =
+        document.createElement(
+          "button"
+        );
+
+
+      muteButton.className =
+        "message-action message-mute";
+
+
+      muteButton.textContent =
+        "🔇 Sustur";
+
+
+      muteButton.onclick =
+        function(){
+
+          openModerationBox(
+            "mute",
+            message.username
+          );
+
+        };
+
+
+      actions.appendChild(
+        muteButton
+      );
+
+
+      const banButton =
+        document.createElement(
+          "button"
+        );
+
+
+      banButton.className =
+        "message-action message-ban";
+
+
+      banButton.textContent =
+        "🚫 Ban";
+
+
+      banButton.onclick =
+        function(){
+
+          openModerationBox(
+            "ban",
+            message.username
+          );
+
+        };
+
+
+      actions.appendChild(
+        banButton
+      );
+
+    }
+
+
+    div.appendChild(
+      actions
+    );
+
+  }
 
 
   box.appendChild(
@@ -1661,6 +2208,7 @@ async function sendMessage(){
       "messageInput"
     );
 
+
   const text =
     input.value.trim();
 
@@ -1679,7 +2227,56 @@ async function sendMessage(){
   }
 
 
-  input.disabled = true;
+  /*
+     BAN KONTROLÜ
+  */
+
+  if(
+    currentRole !== "guest"
+  ){
+
+    const banned =
+      await checkBan(
+        currentUsername
+      );
+
+
+    if(banned){
+
+      input.value =
+        "";
+
+      return;
+    }
+  }
+
+
+  /*
+     SUSTURMA KONTROLÜ
+  */
+
+  if(
+    currentRole !== "guest"
+  ){
+
+    const muted =
+      await checkMute(
+        currentUsername
+      );
+
+
+    if(muted){
+
+      input.value =
+        "";
+
+      return;
+    }
+  }
+
+
+  input.disabled =
+    true;
 
 
   const newMessage = {
@@ -1697,7 +2294,7 @@ async function sendMessage(){
 
 
   /*
-     MESAJI ANINDA EKRANA EKLE
+     MESAJI HEMEN EKRANA KOY
   */
 
   const optimisticMessage = {
@@ -1729,15 +2326,11 @@ async function sendMessage(){
   );
 
 
-  input.value = "";
+  input.value =
+    "";
 
 
   try{
-
-    /*
-       Sadece INSERT.
-       SELECT kullanmıyoruz.
-    */
 
     const result =
       await supabaseClient
@@ -1766,7 +2359,9 @@ async function sendMessage(){
       );
 
 
-      input.value = text;
+      input.value =
+        text;
+
 
       return;
     }
@@ -1785,7 +2380,8 @@ async function sendMessage(){
     );
 
 
-    input.value = text;
+    input.value =
+      text;
 
 
     alert(
@@ -1793,9 +2389,11 @@ async function sendMessage(){
       error.message
     );
 
+
   }finally{
 
-    input.disabled = false;
+    input.disabled =
+      false;
 
     input.focus();
 
@@ -1807,6 +2405,7 @@ async function sendMessage(){
           recentLocalMessages.get(
             messageKey
           );
+
 
         if(
           savedTime &&
@@ -1874,11 +2473,10 @@ function removeOptimisticMessage(
 
     const username =
       bold.textContent
-        .replace(/:$/,"");
-
-
-    const fullText =
-      child.textContent;
+        .replace(
+          /:$/,
+          ""
+        );
 
 
     const timeElement =
@@ -1894,13 +2492,17 @@ function removeOptimisticMessage(
 
 
     const messageText =
-      fullText
+      child.textContent
         .replace(
           bold.textContent,
           ""
         )
         .replace(
           timeText,
+          ""
+        )
+        .replace(
+          "🗑️ Mesaj moderasyon tarafından silindi.",
           ""
         )
         .trim();
@@ -1914,7 +2516,10 @@ function removeOptimisticMessage(
       ].join("|");
 
 
-    if(candidateKey === messageKey){
+    if(
+      candidateKey ===
+      messageKey
+    ){
 
       child.remove();
 
@@ -1928,7 +2533,7 @@ function removeOptimisticMessage(
 
 
 /* =========================
-   ENTER İLE MESAJ
+   ENTER
 ========================= */
 
 document
@@ -1952,7 +2557,7 @@ document
 
 
 /* =========================
-   MESAJ REALTIME
+   REALTIME MESAJLAR
 ========================= */
 
 function startRealtime(){
@@ -1966,6 +2571,7 @@ function startRealtime(){
 
     realtimeChannel =
       null;
+
   }
 
 
@@ -2033,6 +2639,40 @@ function startRealtime(){
 
         }
       )
+      .on(
+        "postgres_changes",
+        {
+
+          event:"UPDATE",
+
+          schema:"public",
+
+          table:"messages"
+
+        },
+
+        payload=>{
+
+          const message =
+            payload.new;
+
+
+          if(
+            message.room !==
+            currentRoom
+          ){
+
+            return;
+
+          }
+
+
+          refreshSingleMessage(
+            message
+          );
+
+        }
+      )
       .subscribe(
         status=>{
 
@@ -2043,6 +2683,65 @@ function startRealtime(){
 
         }
       );
+
+}
+
+
+/* =========================
+   TEK MESAJI YENİLE
+========================= */
+
+function refreshSingleMessage(
+  message
+){
+
+  const box =
+    document.getElementById(
+      "messages"
+    );
+
+
+  if(!box)
+    return;
+
+
+  if(!message.id)
+    return;
+
+
+  const existing =
+    Array.from(
+      box.children
+    ).find(
+      element=>{
+
+        return element.dataset.messageId ===
+          String(message.id);
+
+      }
+    );
+
+
+  if(existing){
+
+    existing.remove();
+
+  }
+
+
+  /*
+     ID'yi tekrar oluşturabilmek
+     için set'ten çıkar.
+  */
+
+  displayedMessageIds.delete(
+    message.id
+  );
+
+
+  addMessageToScreen(
+    message
+  );
 
 }
 
@@ -2132,7 +2831,8 @@ async function loadOnlineUsers(){
   }
 
 
-  box.innerHTML = "";
+  box.innerHTML =
+    "";
 
 
   if(
@@ -2305,15 +3005,722 @@ async function changeRoom(
 
 
 /* =========================
+   MESAJ SİL
+========================= */
+
+async function deleteMessage(
+  messageId
+){
+
+  if(!isStaff()){
+
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "Bu mesaj silinsin mi?"
+    )
+  ){
+
+    return;
+  }
+
+
+  const result =
+    await supabaseClient
+      .rpc(
+        "delete_chat_message",
+        {
+          target_message_id:
+            messageId
+        }
+      );
+
+
+  if(result.error){
+
+    console.error(
+      "Mesaj silme:",
+      result.error
+    );
+
+
+    alert(
+      "Mesaj silinemedi: " +
+      result.error.message
+    );
+
+    return;
+  }
+
+
+  /*
+     Realtime UPDATE gelmezse
+     kendi ekranımızı da yenile.
+  */
+
+  const box =
+    document.getElementById(
+      "messages"
+    );
+
+
+  const existing =
+    Array.from(
+      box.children
+    ).find(
+      element=>{
+
+        return element.dataset.messageId ===
+          String(messageId);
+
+      }
+    );
+
+
+  if(existing){
+
+    existing.remove();
+
+  }
+
+
+  displayedMessageIds.delete(
+    messageId
+  );
+
+
+  /*
+     Mesajı tekrar veritabanından
+     bulup silindi olarak göster.
+  */
+
+  const result2 =
+    await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq(
+        "id",
+        messageId
+      )
+      .maybeSingle();
+
+
+  if(
+    result2.data &&
+    result2.data.room ===
+    currentRoom
+  ){
+
+    addMessageToScreen(
+      result2.data
+    );
+
+  }
+
+}
+
+
+/* =========================
+   MODERASYON PENCERESİ
+========================= */
+
+function openModerationBox(
+  type,
+  username
+){
+
+  if(!isStaff())
+    return;
+
+
+  closeModerationBox();
+
+
+  const overlay =
+    document.createElement(
+      "div"
+    );
+
+
+  overlay.id =
+    "moderationOverlay";
+
+
+  overlay.className =
+    "moderation-overlay";
+
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  const box =
+    document.createElement(
+      "div"
+    );
+
+
+  box.id =
+    "moderationBox";
+
+
+  box.className =
+    "moderation-box";
+
+
+  const title =
+    document.createElement(
+      "h3"
+    );
+
+
+  title.textContent =
+    type === "ban"
+      ? "🚫 Kullanıcıyı Banla"
+      : "🔇 Kullanıcıyı Sustur";
+
+
+  box.appendChild(
+    title
+  );
+
+
+  const userText =
+    document.createElement(
+      "div"
+    );
+
+
+  userText.style.marginBottom =
+    "15px";
+
+
+  userText.textContent =
+    "Kullanıcı: " +
+    username;
+
+
+  box.appendChild(
+    userText
+  );
+
+
+  const label =
+    document.createElement(
+      "label"
+    );
+
+
+  label.textContent =
+    "Süre";
+
+
+  box.appendChild(
+    label
+  );
+
+
+  const select =
+    document.createElement(
+      "select"
+    );
+
+
+  select.id =
+    "moderationDuration";
+
+
+  const options = [
+
+    {
+      value:10,
+      text:"10 dakika"
+    },
+
+    {
+      value:60,
+      text:"1 saat"
+    },
+
+    {
+      value:1440,
+      text:"1 gün"
+    },
+
+    {
+      value:10080,
+      text:"7 gün"
+    },
+
+    {
+      value:43200,
+      text:"30 gün"
+    }
+
+  ];
+
+
+  options.forEach(
+    optionData=>{
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        optionData.value;
+
+
+      option.textContent =
+        optionData.text;
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+
+  box.appendChild(
+    select
+  );
+
+
+  const reasonLabel =
+    document.createElement(
+      "label"
+    );
+
+
+  reasonLabel.textContent =
+    "Sebep";
+
+
+  box.appendChild(
+    reasonLabel
+  );
+
+
+  const reason =
+    document.createElement(
+      "textarea"
+    );
+
+
+  reason.id =
+    "moderationReason";
+
+
+  reason.placeholder =
+    "Sebep yazabilirsiniz...";
+
+
+  box.appendChild(
+    reason
+  );
+
+
+  const buttons =
+    document.createElement(
+      "div"
+    );
+
+
+  buttons.className =
+    "moderation-buttons";
+
+
+  const cancel =
+    document.createElement(
+      "button"
+    );
+
+
+  cancel.className =
+    "moderation-cancel";
+
+
+  cancel.textContent =
+    "Vazgeç";
+
+
+  cancel.onclick =
+    function(){
+
+      closeModerationBox();
+
+    };
+
+
+  const confirmButton =
+    document.createElement(
+      "button"
+    );
+
+
+  confirmButton.className =
+    "moderation-confirm";
+
+
+  confirmButton.textContent =
+    type === "ban"
+      ? "Banla"
+      : "Sustur";
+
+
+  confirmButton.onclick =
+    function(){
+
+      applyModeration(
+        type,
+        username
+      );
+
+    };
+
+
+  buttons.appendChild(
+    cancel
+  );
+
+  buttons.appendChild(
+    confirmButton
+  );
+
+
+  box.appendChild(
+    buttons
+  );
+
+
+  document.body.appendChild(
+    box
+  );
+
+}
+
+
+/* =========================
+   MODERASYON UYGULA
+========================= */
+
+async function applyModeration(
+  type,
+  username
+){
+
+  if(!isStaff())
+    return;
+
+
+  const durationElement =
+    document.getElementById(
+      "moderationDuration"
+    );
+
+
+  const reasonElement =
+    document.getElementById(
+      "moderationReason"
+    );
+
+
+  const duration =
+    Number(
+      durationElement.value
+    );
+
+
+  const reason =
+    reasonElement.value.trim();
+
+
+  if(!duration){
+
+    alert(
+      "Süre seçin."
+    );
+
+    return;
+  }
+
+
+  try{
+
+    /*
+       Kullanıcının profil ID'sini
+       bulmaya çalış.
+    */
+
+    const profile =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,username"
+        )
+        .eq(
+          "username",
+          username
+        )
+        .maybeSingle();
+
+
+    const targetUserId =
+      profile.data
+        ? profile.data.id
+        : null;
+
+
+    let result;
+
+
+    if(type === "ban"){
+
+      result =
+        await supabaseClient
+          .rpc(
+            "ban_user",
+            {
+
+              target_user_id:
+                targetUserId,
+
+              target_username:
+                username,
+
+              ban_reason:
+                reason,
+
+              duration_minutes:
+                duration
+
+            }
+          );
+
+    }else{
+
+      result =
+        await supabaseClient
+          .rpc(
+            "mute_user",
+            {
+
+              target_user_id:
+                targetUserId,
+
+              target_username:
+                username,
+
+              mute_reason:
+                reason,
+
+              duration_minutes:
+                duration
+
+            }
+          );
+
+    }
+
+
+    if(result.error){
+
+      console.error(
+        "Moderasyon:",
+        result.error
+      );
+
+
+      alert(
+        "İşlem başarısız: " +
+        result.error.message
+      );
+
+
+      return;
+    }
+
+
+    closeModerationBox();
+
+
+    alert(
+      type === "ban"
+        ? username +
+          " kullanıcısı banlandı."
+        : username +
+          " kullanıcısı susturuldu."
+    );
+
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+
+    alert(
+      "İşlem sırasında hata oluştu: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   MODERASYON PENCERESİNİ KAPAT
+========================= */
+
+function closeModerationBox(){
+
+  const box =
+    document.getElementById(
+      "moderationBox"
+    );
+
+
+  const overlay =
+    document.getElementById(
+      "moderationOverlay"
+    );
+
+
+  if(box)
+    box.remove();
+
+
+  if(overlay)
+    overlay.remove();
+
+}
+
+
+/* =========================
+   BAN KALDIR
+========================= */
+
+async function unbanUser(
+  username
+){
+
+  if(!isStaff())
+    return;
+
+
+  if(
+    !confirm(
+      username +
+      " kullanıcısının banı kaldırılsın mı?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result =
+    await supabaseClient
+      .rpc(
+        "unban_user",
+        {
+          target_username:
+            username
+        }
+      );
+
+
+  if(result.error){
+
+    alert(
+      "Ban kaldırılamadı: " +
+      result.error.message
+    );
+
+    return;
+  }
+
+
+  alert(
+    username +
+    " kullanıcısının banı kaldırıldı."
+  );
+
+}
+
+
+/* =========================
+   SUSTURMA KALDIR
+========================= */
+
+async function unmuteUser(
+  username
+){
+
+  if(!isStaff())
+    return;
+
+
+  if(
+    !confirm(
+      username +
+      " kullanıcısının susturması kaldırılsın mı?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result =
+    await supabaseClient
+      .rpc(
+        "unmute_user",
+        {
+          target_username:
+            username
+        }
+      );
+
+
+  if(result.error){
+
+    alert(
+      "Susturma kaldırılamadı: " +
+      result.error.message
+    );
+
+    return;
+  }
+
+
+  alert(
+    username +
+    " kullanıcısının susturması kaldırıldı."
+  );
+
+}
+
+
+/* =========================
    ADMIN PANELİ AÇ
 ========================= */
 
 async function openAdminPanel(){
 
-  if(
-    currentRole !== "admin" &&
-    currentRole !== "moderator"
-  ){
+  if(!isStaff()){
 
     alert(
       "Bu alana erişim yetkiniz yok."
@@ -2450,7 +3857,8 @@ async function loadAdminUsers(){
       moderators;
 
 
-  tbody.innerHTML = "";
+  tbody.innerHTML =
+    "";
 
 
   if(users.length === 0){
@@ -2478,6 +3886,7 @@ async function loadAdminUsers(){
           "td"
         );
 
+
       usernameTd.textContent =
         user.username ||
         "-";
@@ -2487,6 +3896,7 @@ async function loadAdminUsers(){
         document.createElement(
           "td"
         );
+
 
       genderTd.textContent =
         user.gender ||
@@ -2509,7 +3919,10 @@ async function loadAdminUsers(){
         "role";
 
 
-      if(user.role === "admin"){
+      if(
+        user.role ===
+        "admin"
+      ){
 
         roleSpan.classList.add(
           "role-admin"
@@ -2519,7 +3932,8 @@ async function loadAdminUsers(){
           "Admin";
 
       }else if(
-        user.role === "moderator"
+        user.role ===
+        "moderator"
       ){
 
         roleSpan.classList.add(
@@ -2554,13 +3968,10 @@ async function loadAdminUsers(){
 
       if(user.created_at){
 
-        const date =
+        dateTd.textContent =
           new Date(
             user.created_at
-          );
-
-        dateTd.textContent =
-          date.toLocaleDateString(
+          ).toLocaleDateString(
             "tr-TR"
           );
 
@@ -2598,22 +4009,32 @@ async function loadAdminUsers(){
             "span"
           );
 
+
         self.className =
           "self-admin";
 
+
         self.textContent =
           "Kendiniz";
+
 
         actions.appendChild(
           self
         );
 
+
       }else if(
-        currentRole === "admin"
+        currentRole ===
+        "admin"
       ){
 
+        /*
+           MODERATÖR YETKİSİ
+        */
+
         if(
-          user.role !== "moderator"
+          user.role !==
+          "moderator"
         ){
 
           const makeButton =
@@ -2621,11 +4042,14 @@ async function loadAdminUsers(){
               "button"
             );
 
+
           makeButton.className =
             "role-action make-moderator";
 
+
           makeButton.textContent =
             "Moderatör Yap";
+
 
           makeButton.onclick =
             function(){
@@ -2636,6 +4060,7 @@ async function loadAdminUsers(){
               );
 
             };
+
 
           actions.appendChild(
             makeButton
@@ -2648,11 +4073,14 @@ async function loadAdminUsers(){
               "button"
             );
 
+
           removeButton.className =
             "role-action remove-moderator";
 
+
           removeButton.textContent =
             "Moderatörlüğü Al";
+
 
           removeButton.onclick =
             function(){
@@ -2664,11 +4092,78 @@ async function loadAdminUsers(){
 
             };
 
+
           actions.appendChild(
             removeButton
           );
 
         }
+
+
+        /*
+           BAN KALDIRMA
+        */
+
+        const unbanButton =
+          document.createElement(
+            "button"
+          );
+
+
+        unbanButton.className =
+          "role-action remove-moderator";
+
+
+        unbanButton.textContent =
+          "Ban Kaldır";
+
+
+        unbanButton.onclick =
+          function(){
+
+            unbanUser(
+              user.username
+            );
+
+          };
+
+
+        actions.appendChild(
+          unbanButton
+        );
+
+
+        /*
+           SUSTURMA KALDIRMA
+        */
+
+        const unmuteButton =
+          document.createElement(
+            "button"
+          );
+
+
+        unmuteButton.className =
+          "role-action make-moderator";
+
+
+        unmuteButton.textContent =
+          "Susturma Kaldır";
+
+
+        unmuteButton.onclick =
+          function(){
+
+            unmuteUser(
+              user.username
+            );
+
+          };
+
+
+        actions.appendChild(
+          unmuteButton
+        );
 
       }else{
 
@@ -2715,7 +4210,7 @@ async function loadAdminUsers(){
 
 
 /* =========================
-   KULLANICI ROLÜ DEĞİŞTİR
+   ROL DEĞİŞTİR
 ========================= */
 
 async function changeUserRole(
@@ -2723,7 +4218,10 @@ async function changeUserRole(
   newRole
 ){
 
-  if(currentRole !== "admin"){
+  if(
+    currentRole !==
+    "admin"
+  ){
 
     alert(
       "Bu işlem sadece admin tarafından yapılabilir."
@@ -2734,13 +4232,23 @@ async function changeUserRole(
 
 
   const confirmText =
-    newRole === "moderator"
+    newRole ===
+    "moderator"
+
       ? "Bu kullanıcı moderatör yapılsın mı?"
+
       : "Bu kullanıcının moderatörlüğü kaldırılsın mı?";
 
 
-  if(!confirm(confirmText))
+  if(
+    !confirm(
+      confirmText
+    )
+  ){
+
     return;
+
+  }
 
 
   const result =
@@ -2765,10 +4273,12 @@ async function changeUserRole(
       result.error
     );
 
+
     alert(
       "Rol değiştirilemedi: " +
       result.error.message
     );
+
 
     return;
   }
@@ -2787,7 +4297,9 @@ async function logout(){
 
   try{
 
-    if(onlineRealtimeChannel){
+    if(
+      onlineRealtimeChannel
+    ){
 
       await supabaseClient
         .removeChannel(
@@ -2800,7 +4312,9 @@ async function logout(){
     }
 
 
-    if(realtimeChannel){
+    if(
+      realtimeChannel
+    ){
 
       await supabaseClient
         .removeChannel(
@@ -2846,16 +4360,22 @@ async function logout(){
   );
 
 
-  currentUsername = "";
+  currentUsername =
+    "";
 
-  currentRole = "user";
+  currentRole =
+    "user";
 
-  currentRoom = "#Cinsellik";
+  currentRoom =
+    "#Cinsellik";
 
 
   displayedMessageIds.clear();
 
   recentLocalMessages.clear();
+
+
+  closeModerationBox();
 
 
   document
@@ -2929,12 +4449,34 @@ window.addEventListener(
         if(!currentUsername){
 
           const metadata =
-            user.user_metadata || {};
+            user.user_metadata ||
+            {};
 
 
           currentUsername =
             metadata.username ||
             "";
+
+        }
+
+
+        if(currentUsername){
+
+          const banned =
+            await checkBan(
+              currentUsername
+            );
+
+
+          if(banned){
+
+            await supabaseClient
+              .auth
+              .signOut();
+
+            return;
+
+          }
 
         }
 
@@ -2979,7 +4521,7 @@ window.addEventListener(
 
 
 /* =========================
-   SAYFA KAPANIRKEN ONLINE
+   SAYFA KAPANIRKEN
 ========================= */
 
 window.addEventListener(
