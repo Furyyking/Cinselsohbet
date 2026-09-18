@@ -246,10 +246,6 @@ input:focus{
   margin-right:7px;
 }
 
-.top10{
-  color:#ff4b4b;
-}
-
 .logout{
   position:absolute;
   right:20px;
@@ -386,6 +382,10 @@ input:focus{
 
 </div>
 
+<!-- =========================
+     GİRİŞ
+========================= -->
+
 <div id="login">
 
   <div class="login-page">
@@ -445,9 +445,16 @@ input:focus{
 
 </div>
 
+
+<!-- =========================
+     CHAT
+========================= -->
+
 <div id="chat">
 
   <div class="chat-layout">
+
+    <!-- KANALLAR -->
 
     <aside class="sidebar">
 
@@ -487,6 +494,9 @@ input:focus{
 
     </aside>
 
+
+    <!-- ANA SOHBET -->
+
     <main class="main">
 
       <div
@@ -518,6 +528,9 @@ input:focus{
 
     </main>
 
+
+    <!-- KULLANICILAR -->
+
     <aside class="users">
 
       <div class="title">
@@ -526,23 +539,18 @@ input:focus{
 
       <div id="onlineUsers"></div>
 
-      <br>
-
-      <div class="title">
-        EN UZUN ÇEVRİM İÇİ
-      </div>
-
-      <div class="user top10">
-        Henüz veri yok
-      </div>
-
     </aside>
 
   </div>
 
 </div>
 
+
 <script>
+
+/* =========================
+   SUPABASE
+========================= */
 
 const SUPABASE_URL =
   "https://kreezswhqbnxvosmbxmu.supabase.co";
@@ -556,16 +564,22 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
+
+/* =========================
+   DEĞİŞKENLER
+========================= */
+
 let selectedGender = "";
 let currentUsername = "";
 let currentRoom = "#Cinsellik";
 
 let realtimeChannel = null;
-
-let onlineUserId = null;
-let onlineHeartbeat = null;
 let onlineRealtimeChannel = null;
 
+
+/* =========================
+   GİRİŞ MESAJI
+========================= */
 
 function showMessage(text,error=false){
 
@@ -582,6 +596,10 @@ function showMessage(text,error=false){
       : "#55e67a";
 }
 
+
+/* =========================
+   CİNSİYET
+========================= */
 
 function selectGender(button){
 
@@ -604,6 +622,10 @@ function selectGender(button){
 }
 
 
+/* =========================
+   EMAIL
+========================= */
+
 function usernameEmail(username){
 
   let clean =
@@ -622,6 +644,10 @@ function usernameEmail(username){
     "@cinselsohbet.com";
 }
 
+
+/* =========================
+   GİRİŞ / KAYIT
+========================= */
 
 async function registerUser(){
 
@@ -708,6 +734,8 @@ async function registerUser(){
       );
 
 
+    /* ÖNCE GİRİŞ */
+
     const loginResult =
       await supabaseClient.auth
         .signInWithPassword({
@@ -731,6 +759,8 @@ async function registerUser(){
       return;
     }
 
+
+    /* KULLANICI YOKSA KAYIT */
 
     const registerResult =
       await supabaseClient.auth
@@ -807,6 +837,10 @@ async function registerUser(){
 }
 
 
+/* =========================
+   MİSAFİR
+========================= */
+
 function guestLogin(){
 
   const number =
@@ -829,6 +863,10 @@ function guestLogin(){
 }
 
 
+/* =========================
+   CHAT'E GİR
+========================= */
+
 function enterChat(){
 
   document
@@ -846,6 +884,7 @@ function enterChat(){
     .style.display =
       "block";
 
+
   loadMessages();
 
   startRealtime();
@@ -853,6 +892,10 @@ function enterChat(){
   joinOnlineUsers();
 }
 
+
+/* =========================
+   MESAJLARI YÜKLE
+========================= */
 
 async function loadMessages(){
 
@@ -905,6 +948,10 @@ async function loadMessages(){
   );
 }
 
+
+/* =========================
+   MESAJI EKRANA EKLE
+========================= */
 
 function addMessageToScreen(message){
 
@@ -988,6 +1035,10 @@ function addMessageToScreen(message){
 }
 
 
+/* =========================
+   MESAJ GÖNDER
+========================= */
+
 async function sendMessage(){
 
   const input =
@@ -999,7 +1050,8 @@ async function sendMessage(){
     input.value.trim();
 
 
-  if(!text) return;
+  if(!text)
+    return;
 
 
   if(!currentUsername){
@@ -1057,6 +1109,10 @@ async function sendMessage(){
 }
 
 
+/* =========================
+   MESAJ REALTIME
+========================= */
+
 function startRealtime(){
 
   if(realtimeChannel){
@@ -1105,11 +1161,20 @@ function startRealtime(){
 }
 
 
+/* =========================
+   ÇEVRİM İÇİ KULLANICI
+========================= */
+
 async function joinOnlineUsers(){
 
   if(!currentUsername)
     return;
 
+
+  /*
+     Aynı kullanıcı adına ait
+     eski kayıtları temizle
+  */
 
   await supabaseClient
     .from("online_users")
@@ -1120,6 +1185,10 @@ async function joinOnlineUsers(){
     );
 
 
+  /*
+     Yeni çevrim içi kaydı
+  */
+
   const result =
     await supabaseClient
       .from("online_users")
@@ -1129,10 +1198,7 @@ async function joinOnlineUsers(){
           currentUsername,
 
         room:
-          currentRoom,
-
-        last_seen:
-          new Date().toISOString()
+          currentRoom
 
       })
       .select()
@@ -1150,52 +1216,15 @@ async function joinOnlineUsers(){
   }
 
 
-  onlineUserId =
-    result.data.id;
-
-
   loadOnlineUsers();
-
-
-  if(onlineHeartbeat){
-
-    clearInterval(
-      onlineHeartbeat
-    );
-  }
-
-
-  onlineHeartbeat =
-    setInterval(
-      updateOnlineStatus,
-      30000
-    );
-
 
   startOnlineRealtime();
 }
 
 
-async function updateOnlineStatus(){
-
-  if(!onlineUserId)
-    return;
-
-
-  await supabaseClient
-    .from("online_users")
-    .update({
-
-      last_seen:
-        new Date().toISOString()
-
-    })
-    .eq(
-      "id",
-      onlineUserId
-    );
-}
-
+/* =========================
+   ONLINE LİSTE
+========================= */
 
 async function loadOnlineUsers(){
 
@@ -1204,6 +1233,7 @@ async function loadOnlineUsers(){
       "onlineUsers"
     );
 
+
   if(!box)
     return;
 
@@ -1211,13 +1241,7 @@ async function loadOnlineUsers(){
   const result =
     await supabaseClient
       .from("online_users")
-      .select("*")
-      .order(
-        "last_seen",
-        {
-          ascending:false
-        }
-      );
+      .select("*");
 
 
   if(result.error){
@@ -1257,6 +1281,10 @@ async function loadOnlineUsers(){
 }
 
 
+/* =========================
+   ONLINE REALTIME
+========================= */
+
 function startOnlineRealtime(){
 
   if(onlineRealtimeChannel){
@@ -1292,6 +1320,10 @@ function startOnlineRealtime(){
 }
 
 
+/* =========================
+   ODA DEĞİŞTİR
+========================= */
+
 async function changeRoom(
   roomName,
   button
@@ -1314,9 +1346,11 @@ async function changeRoom(
       ".channel"
     )
     .forEach(room=>{
+
       room.classList.remove(
         "active"
       );
+
     });
 
 
@@ -1327,36 +1361,37 @@ async function changeRoom(
 
   await loadMessages();
 
-  await updateOnlineRoom();
-}
 
+  /*
+     Kullanıcının bulunduğu
+     odayı güncelle
+  */
 
-async function updateOnlineRoom(){
+  if(currentUsername){
 
-  if(!onlineUserId)
-    return;
+    await supabaseClient
+      .from("online_users")
+      .update({
 
+        room:
+          currentRoom
 
-  await supabaseClient
-    .from("online_users")
-    .update({
+      })
+      .eq(
+        "username",
+        currentUsername
+      );
 
-      room:
-        currentRoom,
-
-      last_seen:
-        new Date().toISOString()
-
-    })
-    .eq(
-      "id",
-      onlineUserId
-    );
+  }
 
 
   loadOnlineUsers();
 }
 
+
+/* =========================
+   ENTER İLE MESAJ
+========================= */
 
 document.addEventListener(
   "keydown",
@@ -1378,19 +1413,17 @@ document.addEventListener(
 );
 
 
+/* =========================
+   ÇIKIŞ
+========================= */
+
 async function logout(){
 
-  if(onlineHeartbeat){
+  /*
+     Kullanıcının online kaydını sil
+  */
 
-    clearInterval(
-      onlineHeartbeat
-    );
-
-    onlineHeartbeat = null;
-  }
-
-
-  if(onlineUserId){
+  if(currentUsername){
 
     try{
 
@@ -1398,8 +1431,8 @@ async function logout(){
         .from("online_users")
         .delete()
         .eq(
-          "id",
-          onlineUserId
+          "username",
+          currentUsername
         );
 
     }catch(error){
@@ -1414,8 +1447,9 @@ async function logout(){
   }
 
 
-  onlineUserId = null;
-
+  /*
+     Mesaj realtime kanalını kapat
+  */
 
   if(realtimeChannel){
 
@@ -1438,6 +1472,10 @@ async function logout(){
   }
 
 
+  /*
+     Online realtime kanalını kapat
+  */
+
   if(onlineRealtimeChannel){
 
     try{
@@ -1458,6 +1496,10 @@ async function logout(){
     onlineRealtimeChannel = null;
   }
 
+
+  /*
+     Supabase oturumunu kapat
+  */
 
   try{
 
@@ -1490,6 +1532,10 @@ async function logout(){
   location.reload();
 }
 
+
+/* =========================
+   OTURUM KONTROL
+========================= */
 
 window.addEventListener(
   "load",
@@ -1530,6 +1576,7 @@ window.addEventListener(
               .email
               ?.split("@")[0] ||
             "Kullanıcı";
+
 
           localStorage.setItem(
             "username",
