@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111b2b">
   <title>Cinsel Sohbet</title>
 
   <style>
@@ -13,186 +12,464 @@
       padding: 0;
     }
 
-    :root {
-      --navy: #111b2b;
-      --navy-light: #1c2a40;
-      --pink: #e83e8c;
-      --pink-light: #fff0f7;
-      --white: #ffffff;
-      --bg: #f5f7fa;
-      --text: #202735;
-      --muted: #7b8494;
-      --border: #e5e8ed;
-      --green: #22c55e;
-    }
-
-    html,
     body {
-      width: 100%;
-      min-height: 100%;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    body {
-      overflow-x: hidden;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    /* ÜST BAR */
-
-    .topbar {
-      height: 64px;
-      background: var(--navy);
+      font-family: Arial, sans-serif;
+      background: #111b2b;
       color: white;
+      min-height: 100vh;
+    }
+
+    .header {
+      height: 65px;
+      background: #1c2a40;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
+      padding: 0 20px;
+      border-bottom: 1px solid #30415c;
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 21px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: bold;
+      color: #e83e8c;
     }
 
-    .logo-dot {
-      width: 10px;
-      height: 10px;
-      background: var(--pink);
-      border-radius: 50%;
-      box-shadow: 0 0 12px rgba(232, 62, 140, 0.7);
+    .login-box {
+      width: 90%;
+      max-width: 420px;
+      margin: 80px auto;
+      background: #1c2a40;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
     }
 
-    .top-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn,
-    .menu-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background: transparent;
-      color: white;
-      font-size: 19px;
-    }
-
-    .icon-btn:hover,
-    .menu-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .menu-btn {
-      display: none;
-    }
-
-    /* GİRİŞ */
-
-    .login-page {
-      min-height: calc(100vh - 64px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px 15px;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 430px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 34px;
-      box-shadow: 0 15px 45px rgba(17, 27, 43, 0.09);
-    }
-
-    .login-logo {
+    .login-box h1 {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 10px;
+      color: #e83e8c;
     }
 
-    .heart {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 15px;
-      border-radius: 18px;
-      background: var(--pink-light);
-      color: var(--pink);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 31px;
+    .login-box p {
+      text-align: center;
+      color: #aeb9ca;
+      margin-bottom: 25px;
     }
 
-    .login-logo h1 {
-      font-size: 28px;
-      color: var(--navy);
-      margin-bottom: 7px;
-    }
-
-    .login-logo p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .login-card label,
-    .gender-title {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .login-card input[type="text"],
-    .login-card input[type="password"] {
+    input {
       width: 100%;
-      height: 48px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
+      padding: 14px;
+      margin-bottom: 15px;
+      border: 1px solid #3a4b65;
+      border-radius: 8px;
+      background: #111b2b;
+      color: white;
+      font-size: 16px;
       outline: none;
-      padding: 0 14px;
-      margin-bottom: 18px;
-      background: #fafbfc;
     }
 
-    .login-card input[type="text"]:focus,
-    .login-card input[type="password"]:focus {
-      border-color: var(--pink);
-      box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.08);
+    input:focus {
+      border-color: #e83e8c;
     }
 
-    .gender-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
-    .gender-option {
-      height: 48px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
+    .gender {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      cursor: pointer;
-      color: var(--muted);
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
-    .gender-option input
+    .gender button {
+      flex: 1;
+      padding: 13px;
+      border: 1px solid #3a4b65;
+      border-radius: 8px;
+      background: #111b2b;
+      color: white;
+      cursor: pointer;
+    }
+
+    .gender button.active {
+      background: #e83e8c;
+      border-color: #e83e8c;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #e83e8c;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login-btn:hover {
+      opacity: .9;
+    }
+
+    #chat {
+      display: none;
+      height: calc(100vh - 65px);
+    }
+
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      height: 100%;
+    }
+
+    .sidebar,
+    .users {
+      background: #1c2a40;
+      padding: 15px;
+    }
+
+    .sidebar {
+      border-right: 1px solid #30415c;
+    }
+
+    .users {
+      border-left: 1px solid #30415c;
+    }
+
+    .panel-title {
+      color: #e83e8c;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .channel {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      color: #d7deea;
+    }
+
+    .channel:hover,
+    .channel.active {
+      background: #e83e8c;
+      color: white;
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chat-title {
+      padding: 15px;
+      border-bottom: 1px solid #30415c;
+      font-weight: bold;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .message {
+      background: #1c2a40;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+
+    .message strong {
+      color: #e83e8c;
+    }
+
+    .message.admin strong {
+      color: #ffd166;
+    }
+
+    .message.mod strong {
+      color: #62d8ff;
+    }
+
+    .send {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      border-top: 1px solid #30415c;
+    }
+
+    .send input {
+      margin: 0;
+    }
+
+    .send button {
+      width: 100px;
+      border: none;
+      border-radius: 8px;
+      background: #e83e8c;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .user {
+      padding: 9px 5px;
+      color: #d7deea;
+    }
+
+    .role-admin {
+      color: #ffd166;
+    }
+
+    .role-mod {
+      color: #62d8ff;
+    }
+
+    .logout {
+      background: #e83e8c;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 800px) {
+      .chat-layout {
+        grid-template-columns: 170px 1fr;
+      }
+
+      .users {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .chat-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .header {
+        padding: 0 12px;
+      }
+
+      .login-box {
+        margin-top: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="logo">💬 Cinsel Sohbet</div>
+    <button class="logout" onclick="logout()" id="logoutBtn" style="display:none;">
+      Çıkış
+    </button>
+  </div>
+
+  <div id="login">
+    <div class="login-box">
+      <h1>Cinsel Sohbet</h1>
+      <p>Sohbete katılmak için giriş yap</p>
+
+      <input type="text" id="username" placeholder="Kullanıcı adınız">
+
+      <input type="password" id="password" placeholder="Şifreniz">
+
+      <div class="gender">
+        <button onclick="selectGender(this)">Kadın</button>
+        <button onclick="selectGender(this)">Erkek</button>
+      </div>
+
+      <button class="login-btn" onclick="login()">
+        Sohbete Gir
+      </button>
+    </div>
+  </div>
+
+  <div id="chat">
+
+    <div class="chat-layout">
+
+      <aside class="sidebar">
+        <div class="panel-title">Kanallar</div>
+
+        <div class="channel active"># Genel Sohbet</div>
+        <div class="channel"># Lezbiyen</div>
+        <div class="channel"># Sanal</div>
+        <div class="channel"># Müzik</div>
+        <div class="channel"># Sohbet</div>
+        <div class="channel"># Cinsellik</div>
+        <div class="channel"># Yetişkin</div>
+      </aside>
+
+      <main class="main">
+
+        <div class="chat-title">
+          # Genel Sohbet
+        </div>
+
+        <div class="messages" id="messages">
+
+          <div class="message admin">
+            <strong>👑 Admin:</strong>
+            Hoş geldiniz arkadaşlar.
+          </div>
+
+          <div class="message mod">
+            <strong>🛡️ Moderatör:</strong>
+            Herkese iyi sohbetler.
+          </div>
+
+          <div class="message">
+            <strong>Misafir:</strong>
+            Selam herkese 👋
+          </div>
+
+        </div>
+
+        <div class="send">
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="Mesajınızı yazın..."
+            onkeydown="if(event.key==='Enter') sendMessage()"
+          >
+
+          <button onclick="sendMessage()">
+            Gönder
+          </button>
+        </div>
+
+      </main>
+
+      <aside class="users">
+
+        <div class="panel-title">
+          Çevrimiçi
+        </div>
+
+        <div class="user role-admin">
+          👑 Admin
+        </div>
+
+        <div class="user role-mod">
+          🛡️ Moderatör
+        </div>
+
+        <div class="user">
+          Kullanıcı1
+        </div>
+
+        <div class="user">
+          Kullanıcı2
+        </div>
+
+        <div class="user">
+          Kullanıcı3
+        </div>
+
+        <br>
+
+        <div class="panel-title">
+          En Uzun Süredir Online
+        </div>
+
+        <div class="user">1. Kullanıcı1</div>
+        <div class="user">2. Kullanıcı2</div>
+        <div class="user">3. Kullanıcı3</div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+  <script>
+    let selectedGender = "";
+
+    function selectGender(button) {
+      document.querySelectorAll(".gender button").forEach(function(btn) {
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
+      selectedGender = button.innerText;
+    }
+
+    function login() {
+      const username = document.getElementById("username").value.trim();
+
+      if (username === "") {
+        alert("Lütfen kullanıcı adınızı yazın.");
+        return;
+      }
+
+      document.getElementById("login").style.display = "none";
+      document.getElementById("chat").style.display = "block";
+      document.getElementById("logoutBtn").style.display = "block";
+
+      const messages = document.getElementById("messages");
+
+      messages.innerHTML += `
+        <div class="message">
+          <strong>${username}:</strong>
+          Sohbete katıldı 👋
+        </div>
+      `;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+
+      if (text === "") {
+        return;
+      }
+
+      const username =
+        document.getElementById("username").value.trim() || "Misafir";
+
+      const messages = document.getElementById("messages");
+
+      messages.innerHTML += `
+        <div class="message">
+          <strong>${username}:</strong>
+          ${text}
+        </div>
+      `;
+
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function logout() {
+      document.getElementById("chat").style.display = "none";
+      document.getElementById("login").style.display = "block";
+      document.getElementById("logoutBtn").style.display = "none";
+    }
+
+    document.querySelectorAll(".channel").forEach(function(channel) {
+      channel.addEventListener("click", function() {
+
+        document.querySelectorAll(".channel").forEach(function(item) {
+          item.classList.remove("active");
+        });
+
+        channel.classList.add("active");
+
+        document.querySelector(".chat-title").innerText =
+          channel.innerText;
+      });
+    });
+  </script>
+
+</body>
+</html>
