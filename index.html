@@ -1,475 +1,368 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cinsel Sohbet</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cinsel Sohbet</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #111b2b;
-      color: white;
-      min-height: 100vh;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111b2b;
+  color: white;
+}
 
-    .header {
-      height: 65px;
-      background: #1c2a40;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      border-bottom: 1px solid #30415c;
-    }
+.header {
+  height: 65px;
+  background: #1c2a40;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #34445d;
+}
 
-    .logo {
-      font-size: 22px;
-      font-weight: bold;
-      color: #e83e8c;
-    }
+.logo {
+  color: #e83e8c;
+  font-size: 22px;
+  font-weight: bold;
+}
 
-    .login-box {
-      width: 90%;
-      max-width: 420px;
-      margin: 80px auto;
-      background: #1c2a40;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.3);
-    }
+.login {
+  width: 90%;
+  max-width: 400px;
+  margin: 80px auto;
+  background: #1c2a40;
+  padding: 30px;
+  border-radius: 15px;
+}
 
-    .login-box h1 {
-      text-align: center;
-      margin-bottom: 10px;
-      color: #e83e8c;
-    }
+.login h1 {
+  text-align: center;
+  color: #e83e8c;
+}
 
-    .login-box p {
-      text-align: center;
-      color: #aeb9ca;
-      margin-bottom: 25px;
-    }
+.login p {
+  text-align: center;
+  color: #aaa;
+}
 
-    input {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 15px;
-      border: 1px solid #3a4b65;
-      border-radius: 8px;
-      background: #111b2b;
-      color: white;
-      font-size: 16px;
-      outline: none;
-    }
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  background: #111b2b;
+  color: white;
+  border: 1px solid #45556d;
+  border-radius: 8px;
+  font-size: 16px;
+}
 
-    input:focus {
-      border-color: #e83e8c;
-    }
+.gender {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
 
-    .gender {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
+.gender button,
+.login button {
+  padding: 13px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-    .gender button {
-      flex: 1;
-      padding: 13px;
-      border: 1px solid #3a4b65;
-      border-radius: 8px;
-      background: #111b2b;
-      color: white;
-      cursor: pointer;
-    }
+.gender button {
+  flex: 1;
+  background: #263650;
+  color: white;
+}
 
-    .gender button.active {
-      background: #e83e8c;
-      border-color: #e83e8c;
-    }
+.login-button {
+  width: 100%;
+  background: #e83e8c;
+  color: white;
+  font-size: 16px;
+}
 
-    .login-btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      background: #e83e8c;
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+#chat {
+  display: none;
+}
 
-    .login-btn:hover {
-      opacity: .9;
-    }
+.chat {
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  height: calc(100vh - 65px);
+}
 
-    #chat {
-      display: none;
-      height: calc(100vh - 65px);
-    }
+.sidebar,
+.users {
+  background: #1c2a40;
+  padding: 15px;
+}
 
-    .chat-layout {
-      display: grid;
-      grid-template-columns: 220px 1fr 220px;
-      height: 100%;
-    }
+.sidebar {
+  border-right: 1px solid #34445d;
+}
 
-    .sidebar,
-    .users {
-      background: #1c2a40;
-      padding: 15px;
-    }
+.users {
+  border-left: 1px solid #34445d;
+}
 
-    .sidebar {
-      border-right: 1px solid #30415c;
-    }
+.title {
+  color: #e83e8c;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
 
-    .users {
-      border-left: 1px solid #30415c;
-    }
+.channel {
+  padding: 12px;
+  border-radius: 7px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
 
-    .panel-title {
-      color: #e83e8c;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
+.channel:hover,
+.channel.active {
+  background: #e83e8c;
+}
 
-    .channel {
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      color: #d7deea;
-    }
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 
-    .channel:hover,
-    .channel.active {
-      background: #e83e8c;
-      color: white;
-    }
+.chat-title {
+  padding: 18px;
+  border-bottom: 1px solid #34445d;
+  font-weight: bold;
+}
 
-    .main {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
+.messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
 
-    .chat-title {
-      padding: 15px;
-      border-bottom: 1px solid #30415c;
-      font-weight: bold;
-    }
+.message {
+  background: #1c2a40;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 9px;
+}
 
-    .messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
+.message b {
+  color: #e83e8c;
+}
 
-    .message {
-      background: #1c2a40;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-    }
+.send {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  border-top: 1px solid #34445d;
+}
 
-    .message strong {
-      color: #e83e8c;
-    }
+.send input {
+  margin: 0;
+}
 
-    .message.admin strong {
-      color: #ffd166;
-    }
+.send button {
+  width: 100px;
+  border: 0;
+  border-radius: 8px;
+  background: #e83e8c;
+  color: white;
+  font-weight: bold;
+}
 
-    .message.mod strong {
-      color: #62d8ff;
-    }
+.user {
+  padding: 8px 0;
+}
 
-    .send {
-      display: flex;
-      gap: 10px;
-      padding: 15px;
-      border-top: 1px solid #30415c;
-    }
+.admin {
+  color: #ffd166;
+}
 
-    .send input {
-      margin: 0;
-    }
+.mod {
+  color: #62d8ff;
+}
 
-    .send button {
-      width: 100px;
-      border: none;
-      border-radius: 8px;
-      background: #e83e8c;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
+@media (max-width: 800px) {
+  .chat {
+    grid-template-columns: 170px 1fr;
+  }
 
-    .user {
-      padding: 9px 5px;
-      color: #d7deea;
-    }
+  .users {
+    display: none;
+  }
+}
 
-    .role-admin {
-      color: #ffd166;
-    }
+@media (max-width: 600px) {
+  .chat {
+    display: block;
+  }
 
-    .role-mod {
-      color: #62d8ff;
-    }
-
-    .logout {
-      background: #e83e8c;
-      color: white;
-      border: none;
-      border-radius: 7px;
-      padding: 9px 14px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 800px) {
-      .chat-layout {
-        grid-template-columns: 170px 1fr;
-      }
-
-      .users {
-        display: none;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .chat-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        display: none;
-      }
-
-      .header {
-        padding: 0 12px;
-      }
-
-      .login-box {
-        margin-top: 50px;
-      }
-    }
-  </style>
+  .sidebar {
+    display: none;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <div class="header">
-    <div class="logo">💬 Cinsel Sohbet</div>
-    <button class="logout" onclick="logout()" id="logoutBtn" style="display:none;">
-      Çıkış
+<div class="header">
+  <div class="logo">💬 Cinsel Sohbet</div>
+</div>
+
+<div id="login">
+
+  <div class="login">
+    <h1>Cinsel Sohbet</h1>
+    <p>Sohbete giriş yap</p>
+
+    <input id="username" type="text" placeholder="Kullanıcı adı">
+    <input id="password" type="password" placeholder="Şifre">
+
+    <div class="gender">
+      <button type="button">Kadın</button>
+      <button type="button">Erkek</button>
+    </div>
+
+    <button class="login-button" onclick="login()">
+      Sohbete Gir
     </button>
   </div>
 
-  <div id="login">
-    <div class="login-box">
-      <h1>Cinsel Sohbet</h1>
-      <p>Sohbete katılmak için giriş yap</p>
+</div>
 
-      <input type="text" id="username" placeholder="Kullanıcı adınız">
+<div id="chat">
 
-      <input type="password" id="password" placeholder="Şifreniz">
+  <div class="chat">
 
-      <div class="gender">
-        <button onclick="selectGender(this)">Kadın</button>
-        <button onclick="selectGender(this)">Erkek</button>
+    <div class="sidebar">
+
+      <div class="title">KANALLAR</div>
+
+      <div class="channel active"># Genel Sohbet</div>
+      <div class="channel"># Lezbiyen</div>
+      <div class="channel"># Sanal</div>
+      <div class="channel"># Müzik</div>
+      <div class="channel"># Sohbet</div>
+      <div class="channel"># Cinsellik</div>
+      <div class="channel"># Yetişkin</div>
+
+    </div>
+
+    <div class="main">
+
+      <div class="chat-title">
+        # Genel Sohbet
       </div>
 
-      <button class="login-btn" onclick="login()">
-        Sohbete Gir
-      </button>
+      <div class="messages" id="messages">
+
+        <div class="message">
+          <b>Admin:</b> Hoş geldiniz 👑
+        </div>
+
+        <div class="message">
+          <b>Moderatör:</b> Herkese iyi sohbetler 🛡️
+        </div>
+
+        <div class="message">
+          <b>Sistem:</b> Sohbet odasına hoş geldiniz.
+        </div>
+
+      </div>
+
+      <div class="send">
+        <input
+          id="message"
+          type="text"
+          placeholder="Mesajınızı yazın..."
+          onkeydown="if(event.key==='Enter') sendMessage()"
+        >
+
+        <button onclick="sendMessage()">
+          Gönder
+        </button>
+      </div>
+
     </div>
-  </div>
 
-  <div id="chat">
+    <div class="users">
 
-    <div class="chat-layout">
+      <div class="title">ÇEVRİMİÇİ</div>
 
-      <aside class="sidebar">
-        <div class="panel-title">Kanallar</div>
+      <div class="user admin">👑 Admin</div>
+      <div class="user mod">🛡️ Moderatör</div>
+      <div class="user">Kullanıcı1</div>
+      <div class="user">Kullanıcı2</div>
+      <div class="user">Kullanıcı3</div>
 
-        <div class="channel active"># Genel Sohbet</div>
-        <div class="channel"># Lezbiyen</div>
-        <div class="channel"># Sanal</div>
-        <div class="channel"># Müzik</div>
-        <div class="channel"># Sohbet</div>
-        <div class="channel"># Cinsellik</div>
-        <div class="channel"># Yetişkin</div>
-      </aside>
+      <br>
 
-      <main class="main">
+      <div class="title">EN UZUN SÜREDİR ONLINE</div>
 
-        <div class="chat-title">
-          # Genel Sohbet
-        </div>
-
-        <div class="messages" id="messages">
-
-          <div class="message admin">
-            <strong>👑 Admin:</strong>
-            Hoş geldiniz arkadaşlar.
-          </div>
-
-          <div class="message mod">
-            <strong>🛡️ Moderatör:</strong>
-            Herkese iyi sohbetler.
-          </div>
-
-          <div class="message">
-            <strong>Misafir:</strong>
-            Selam herkese 👋
-          </div>
-
-        </div>
-
-        <div class="send">
-          <input
-            type="text"
-            id="messageInput"
-            placeholder="Mesajınızı yazın..."
-            onkeydown="if(event.key==='Enter') sendMessage()"
-          >
-
-          <button onclick="sendMessage()">
-            Gönder
-          </button>
-        </div>
-
-      </main>
-
-      <aside class="users">
-
-        <div class="panel-title">
-          Çevrimiçi
-        </div>
-
-        <div class="user role-admin">
-          👑 Admin
-        </div>
-
-        <div class="user role-mod">
-          🛡️ Moderatör
-        </div>
-
-        <div class="user">
-          Kullanıcı1
-        </div>
-
-        <div class="user">
-          Kullanıcı2
-        </div>
-
-        <div class="user">
-          Kullanıcı3
-        </div>
-
-        <br>
-
-        <div class="panel-title">
-          En Uzun Süredir Online
-        </div>
-
-        <div class="user">1. Kullanıcı1</div>
-        <div class="user">2. Kullanıcı2</div>
-        <div class="user">3. Kullanıcı3</div>
-
-      </aside>
+      <div class="user">1. Kullanıcı1</div>
+      <div class="user">2. Kullanıcı2</div>
+      <div class="user">3. Kullanıcı3</div>
+      <div class="user">4. Kullanıcı4</div>
+      <div class="user">5. Kullanıcı5</div>
 
     </div>
 
   </div>
 
-  <script>
-    let selectedGender = "";
+</div>
 
-    function selectGender(button) {
-      document.querySelectorAll(".gender button").forEach(function(btn) {
-        btn.classList.remove("active");
-      });
+<script>
 
-      button.classList.add("active");
-      selectedGender = button.innerText;
-    }
+function login() {
 
-    function login() {
-      const username = document.getElementById("username").value.trim();
+  var username = document.getElementById("username").value.trim();
 
-      if (username === "") {
-        alert("Lütfen kullanıcı adınızı yazın.");
-        return;
-      }
+  if (username === "") {
+    alert("Kullanıcı adınızı yazın.");
+    return;
+  }
 
-      document.getElementById("login").style.display = "none";
-      document.getElementById("chat").style.display = "block";
-      document.getElementById("logoutBtn").style.display = "block";
+  document.getElementById("login").style.display = "none";
+  document.getElementById("chat").style.display = "block";
 
-      const messages = document.getElementById("messages");
+}
 
-      messages.innerHTML += `
-        <div class="message">
-          <strong>${username}:</strong>
-          Sohbete katıldı 👋
-        </div>
-      `;
-    }
+function sendMessage() {
 
-    function sendMessage() {
-      const input = document.getElementById("messageInput");
-      const text = input.value.trim();
+  var input = document.getElementById("message");
+  var text = input.value.trim();
 
-      if (text === "") {
-        return;
-      }
+  if (text === "") {
+    return;
+  }
 
-      const username =
-        document.getElementById("username").value.trim() || "Misafir";
+  var username =
+    document.getElementById("username").value.trim();
 
-      const messages = document.getElementById("messages");
+  var messages =
+    document.getElementById("messages");
 
-      messages.innerHTML += `
-        <div class="message">
-          <strong>${username}:</strong>
-          ${text}
-        </div>
-      `;
+  var newMessage =
+    document.createElement("div");
 
-      input.value = "";
-      messages.scrollTop = messages.scrollHeight;
-    }
+  newMessage.className = "message";
 
-    function logout() {
-      document.getElementById("chat").style.display = "none";
-      document.getElementById("login").style.display = "block";
-      document.getElementById("logoutBtn").style.display = "none";
-    }
+  newMessage.innerHTML =
+    "<b>" + username + ":</b> " + text;
 
-    document.querySelectorAll(".channel").forEach(function(channel) {
-      channel.addEventListener("click", function() {
+  messages.appendChild(newMessage);
 
-        document.querySelectorAll(".channel").forEach(function(item) {
-          item.classList.remove("active");
-        });
+  input.value = "";
 
-        channel.classList.add("active");
-
-        document.querySelector(".chat-title").innerText =
-          channel.innerText;
-      });
-    });
-  </script>
-
-</body>
-</html>
+  messages
