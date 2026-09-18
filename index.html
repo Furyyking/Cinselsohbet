@@ -264,7 +264,7 @@ input:focus{
 
 
 /* =========================
-   TABLET
+   MOBİL KANALLAR
 ========================= */
 
 @media(max-width:800px){
@@ -322,49 +322,26 @@ input:focus{
 @media(max-width:600px){
 
   #chat{
-    display:none;
     height:calc(100vh - 65px);
   }
 
   .chat-layout{
     display:flex !important;
     flex-direction:column;
-    height:100%;
-    width:100%;
   }
 
   .sidebar{
     display:flex !important;
     visibility:visible !important;
-    height:58px;
-    min-height:58px;
-    width:100%;
-    overflow-x:auto;
-    overflow-y:hidden;
-    flex-shrink:0;
-    padding:7px;
-    background:#1c2a40;
-  }
-
-  .sidebar::-webkit-scrollbar{
-    display:none;
   }
 
   .channel{
     display:block !important;
     visibility:visible !important;
-    flex:0 0 auto;
-    padding:10px 14px;
-    margin:0;
-    white-space:nowrap;
   }
 
   .main{
-    display:flex !important;
-    flex-direction:column;
-    width:100%;
     height:calc(100% - 58px);
-    min-height:0;
   }
 
   .chat-title{
@@ -372,18 +349,12 @@ input:focus{
   }
 
   .messages{
-    flex:1;
     padding:12px;
-    overflow-y:auto;
   }
 
   .send{
     padding:10px;
     gap:7px;
-  }
-
-  .send input{
-    min-width:0;
   }
 
   .send button{
@@ -409,8 +380,6 @@ input:focus{
 
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
 
   <div class="logo">
@@ -428,7 +397,9 @@ input:focus{
 </div>
 
 
-<!-- GİRİŞ -->
+<!-- =========================
+     GİRİŞ
+========================= -->
 
 <div id="login">
 
@@ -490,11 +461,14 @@ input:focus{
 </div>
 
 
-<!-- CHAT -->
+<!-- =========================
+     CHAT
+========================= -->
 
 <div id="chat">
 
   <div class="chat-layout">
+
 
     <!-- KANALLAR -->
 
@@ -537,7 +511,7 @@ input:focus{
     </aside>
 
 
-    <!-- ANA CHAT -->
+    <!-- ANA SOHBET -->
 
     <main class="main">
 
@@ -624,22 +598,31 @@ const supabaseClient =
 let selectedGender = "";
 let currentUsername = "";
 let currentRoom = "#Cinsellik";
+
 let realtimeChannel = null;
+
+let onlineUserId = null;
+let onlineHeartbeat = null;
+let onlineRealtimeChannel = null;
 
 
 /* =========================
-   MESAJ
+   GİRİŞ MESAJI
 ========================= */
 
 function showMessage(text,error=false){
 
   const box =
-    document.getElementById("loginMessage");
+    document.getElementById(
+      "loginMessage"
+    );
 
   box.textContent = text;
 
   box.style.color =
-    error ? "#ff5c5c" : "#55e67a";
+    error
+      ? "#ff5c5c"
+      : "#55e67a";
 }
 
 
@@ -653,12 +636,18 @@ function selectGender(button){
     button.dataset.gender;
 
   document
-    .querySelectorAll(".gender button")
+    .querySelectorAll(
+      ".gender button"
+    )
     .forEach(btn=>{
-      btn.classList.remove("active");
+      btn.classList.remove(
+        "active"
+      );
     });
 
-  button.classList.add("active");
+  button.classList.add(
+    "active"
+  );
 }
 
 
@@ -680,7 +669,8 @@ function usernameEmail(username){
       .replace(/ç/g,"c")
       .replace(/[^a-z0-9]/g,"");
 
-  return clean + "@cinselsohbet.com";
+  return clean +
+    "@cinselsohbet.com";
 }
 
 
@@ -692,17 +682,23 @@ async function registerUser(){
 
   const username =
     document
-      .getElementById("username")
+      .getElementById(
+        "username"
+      )
       .value
       .trim();
 
   const password =
     document
-      .getElementById("password")
+      .getElementById(
+        "password"
+      )
       .value;
 
   const button =
-    document.getElementById("loginBtn");
+    document.getElementById(
+      "loginBtn"
+    );
 
 
   if(!username){
@@ -762,8 +758,12 @@ async function registerUser(){
   try{
 
     const email =
-      usernameEmail(username);
+      usernameEmail(
+        username
+      );
 
+
+    /* ÖNCE GİRİŞ */
 
     const loginResult =
       await supabaseClient.auth
@@ -788,6 +788,8 @@ async function registerUser(){
       return;
     }
 
+
+    /* KULLANICI YOKSA KAYIT */
 
     const registerResult =
       await supabaseClient.auth
@@ -849,7 +851,8 @@ async function registerUser(){
     console.error(error);
 
     showMessage(
-      "Hata: " + error.message,
+      "Hata: " +
+      error.message,
       true
     );
 
@@ -872,11 +875,13 @@ function guestLogin(){
   const number =
     Math.floor(
       10000 +
-      Math.random() * 90000
+      Math.random() *
+      90000
     );
 
   currentUsername =
-    "Misafir" + number;
+    "Misafir" +
+    number;
 
   localStorage.setItem(
     "username",
@@ -895,40 +900,25 @@ function enterChat(){
 
   document
     .getElementById("login")
-    .style.display = "none";
+    .style.display =
+      "none";
 
   document
     .getElementById("chat")
-    .style.display = "block";
+    .style.display =
+      "block";
 
   document
     .getElementById("logoutBtn")
-    .style.display = "block";
-
-
-  const online =
-    document.getElementById(
-      "onlineUsers"
-    );
-
-  online.innerHTML = "";
-
-
-  const user =
-    document.createElement("div");
-
-  user.className =
-    "user online";
-
-  user.textContent =
-    currentUsername;
-
-  online.appendChild(user);
+    .style.display =
+      "block";
 
 
   loadMessages();
 
   startRealtime();
+
+  joinOnlineUsers();
 }
 
 
@@ -950,10 +940,16 @@ async function loadMessages(){
     await supabaseClient
       .from("messages")
       .select("*")
-      .eq("room",currentRoom)
-      .order("created_at",{
-        ascending:true
-      });
+      .eq(
+        "room",
+        currentRoom
+      )
+      .order(
+        "created_at",
+        {
+          ascending:true
+        }
+      );
 
 
   if(result.error){
@@ -995,27 +991,35 @@ function addMessageToScreen(message){
 
 
   const div =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
   div.className =
     "message";
 
 
   const username =
-    document.createElement("b");
+    document.createElement(
+      "b"
+    );
 
   username.textContent =
-    message.username + ":";
+    message.username +
+    ":";
 
 
   const text =
     document.createTextNode(
-      " " + message.message
+      " " +
+      message.message
     );
 
 
   const time =
-    document.createElement("span");
+    document.createElement(
+      "span"
+    );
 
   time.className =
     "message-time";
@@ -1037,11 +1041,23 @@ function addMessageToScreen(message){
     );
 
 
-  div.appendChild(username);
-  div.appendChild(text);
-  div.appendChild(time);
+  div.appendChild(
+    username
+  );
 
-  box.appendChild(div);
+  div.appendChild(
+    text
+  );
+
+  div.appendChild(
+    time
+  );
+
+
+  box.appendChild(
+    div
+  );
+
 
   box.scrollTop =
     box.scrollHeight;
@@ -1084,11 +1100,14 @@ async function sendMessage(){
       .from("messages")
       .insert({
 
-        room:currentRoom,
+        room:
+          currentRoom,
 
-        username:currentUsername,
+        username:
+          currentUsername,
 
-        message:text
+        message:
+          text
 
       })
       .select()
@@ -1119,7 +1138,7 @@ async function sendMessage(){
 
 
 /* =========================
-   REALTIME
+   MESAJ REALTIME
 ========================= */
 
 function startRealtime(){
@@ -1135,7 +1154,9 @@ function startRealtime(){
 
   realtimeChannel =
     supabaseClient
-      .channel("messages-channel")
+      .channel(
+        "messages-channel"
+      )
 
       .on(
         "postgres_changes",
@@ -1149,6 +1170,7 @@ function startRealtime(){
           const message =
             payload.new;
 
+
           if(
             message.room ===
             currentRoom
@@ -1159,19 +1181,220 @@ function startRealtime(){
             );
 
           }
+
         }
       )
 
-      .subscribe(
-        status=>{
+      .subscribe();
+}
 
-          console.log(
-            "Realtime:",
-            status
-          );
 
+/* =========================
+   ÇEVRİM İÇİNE GİR
+========================= */
+
+async function joinOnlineUsers(){
+
+  if(!currentUsername)
+    return;
+
+
+  /* Aynı isim varsa eski kaydı temizle */
+
+  await supabaseClient
+    .from("online_users")
+    .delete()
+    .eq(
+      "username",
+      currentUsername
+    );
+
+
+  /* Yeni kayıt */
+
+  const result =
+    await supabaseClient
+      .from("online_users")
+      .insert({
+
+        username:
+          currentUsername,
+
+        room:
+          currentRoom,
+
+        last_seen:
+          new Date().toISOString()
+
+      })
+      .select()
+      .single();
+
+
+  if(result.error){
+
+    console.error(
+      "Online kullanıcı hatası:",
+      result.error
+    );
+
+    return;
+  }
+
+
+  onlineUserId =
+    result.data.id;
+
+
+  loadOnlineUsers();
+
+
+  /* 30 saniyede bir aktiflik */
+
+  if(onlineHeartbeat){
+
+    clearInterval(
+      onlineHeartbeat
+    );
+  }
+
+
+  onlineHeartbeat =
+    setInterval(
+      updateOnlineStatus,
+      30000
+    );
+
+
+  startOnlineRealtime();
+}
+
+
+/* =========================
+   AKTİFLİK GÜNCELLE
+========================= */
+
+async function updateOnlineStatus(){
+
+  if(!onlineUserId)
+    return;
+
+
+  await supabaseClient
+    .from("online_users")
+    .update({
+
+      last_seen:
+        new Date().toISOString()
+
+    })
+    .eq(
+      "id",
+      onlineUserId
+    );
+}
+
+
+/* =========================
+   ONLINE LİSTE
+========================= */
+
+async function loadOnlineUsers(){
+
+  const box =
+    document.getElementById(
+      "onlineUsers"
+    );
+
+  if(!box)
+    return;
+
+
+  const result =
+    await supabaseClient
+      .from("online_users")
+      .select("*")
+      .order(
+        "last_seen",
+        {
+          ascending:false
         }
       );
+
+
+  if(result.error){
+
+    console.error(
+      "Online liste:",
+      result.error
+    );
+
+    return;
+  }
+
+
+  box.innerHTML = "";
+
+
+  result.data.forEach(
+    user=>{
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "user online";
+
+      div.textContent =
+        user.username;
+
+      box.appendChild(
+        div
+      );
+
+    }
+  );
+}
+
+
+/* =========================
+   ONLINE REALTIME
+========================= */
+
+function startOnlineRealtime(){
+
+  if(onlineRealtimeChannel){
+
+    supabaseClient
+      .removeChannel(
+        onlineRealtimeChannel
+      );
+  }
+
+
+  onlineRealtimeChannel =
+    supabaseClient
+      .channel(
+        "online-users-channel"
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"online_users"
+        },
+        function(){
+
+          loadOnlineUsers();
+
+        }
+      )
+
+      .subscribe();
 }
 
 
@@ -1189,13 +1412,17 @@ async function changeRoom(
 
 
   document
-    .getElementById("roomTitle")
+    .getElementById(
+      "roomTitle"
+    )
     .textContent =
       roomName;
 
 
   document
-    .querySelectorAll(".channel")
+    .querySelectorAll(
+      ".channel"
+    )
     .forEach(room=>{
       room.classList.remove(
         "active"
@@ -1209,11 +1436,44 @@ async function changeRoom(
 
 
   await loadMessages();
+
+  await updateOnlineRoom();
 }
 
 
 /* =========================
-   ENTER
+   ONLINE ODA GÜNCELLE
+========================= */
+
+async function updateOnlineRoom(){
+
+  if(!onlineUserId)
+    return;
+
+
+  await supabaseClient
+    .from("online_users")
+    .update({
+
+      room:
+        currentRoom,
+
+      last_seen:
+        new Date().toISOString()
+
+    })
+    .eq(
+      "id",
+      onlineUserId
+    );
+
+
+  loadOnlineUsers();
+}
+
+
+/* =========================
+   ENTER MESAJ
 ========================= */
 
 document.addEventListener(
@@ -1241,6 +1501,35 @@ document.addEventListener(
 ========================= */
 
 async function logout(){
+
+  if(onlineHeartbeat){
+
+    clearInterval(
+      onlineHeartbeat
+    );
+  }
+
+
+  if(onlineRealtimeChannel){
+
+    await supabaseClient
+      .removeChannel(
+        onlineRealtimeChannel
+      );
+  }
+
+
+  if(onlineUserId){
+
+    await supabaseClient
+      .from("online_users")
+      .delete()
+      .eq(
+        "id",
+        onlineUserId
+      );
+  }
+
 
   if(realtimeChannel){
 
@@ -1309,7 +1598,9 @@ window.addEventListener(
         if(currentUsername){
 
           enterChat();
+
         }
+
       }
 
     }catch(error){
