@@ -1,100 +1,130 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111b2b">
-  <title>Cinsel Sohbet</title>
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111b2b">
+<title>Cinsel Sohbet</title>
 
-<body>
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-  <div class="app">
+:root{
+  --navy:#111b2b;
+  --navy2:#19263a;
+  --pink:#e83e8c;
+  --pink2:#fff0f7;
+  --white:#fff;
+  --bg:#f4f6f9;
+  --text:#202735;
+  --muted:#7b8494;
+  --border:#e5e8ed;
+  --green:#22c55e;
+}
 
-    <!-- ÜST MENÜ -->
-    <header class="topbar">
-      <div class="logo">
-        <span class="logo-dot"></span>
-        Cinsel Sohbet
-      </div>
+html,body{
+  width:100%;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-      <div class="top-actions">
-        <button class="icon-btn" title="Bildirimler">🔔</button>
-        <button class="menu-btn" id="menuBtn">☰</button>
-      </div>
-    </header>
+body{
+  overflow-x:hidden;
+}
 
-    <!-- GİRİŞ EKRANI -->
-    <main class="login-page" id="loginPage">
-      <div class="login-card">
+button,input{
+  font:inherit;
+}
 
-        <div class="login-logo">
-          <div class="heart">♥</div>
-          <h1>Cinsel Sohbet</h1>
-          <p>Yeni insanlarla tanış, sohbet et.</p>
-        </div>
+button{
+  cursor:pointer;
+  border:0;
+}
 
-        <form id="loginForm">
+/* ÜST BAR */
 
-          <label for="username">Kullanıcı Adı</label>
-          <input
-            type="text"
-            id="username"
-            placeholder="Kullanıcı adınızı girin"
-            maxlength="20"
-            autocomplete="off"
-            required
-          >
+.topbar{
+  height:64px;
+  background:var(--navy);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+}
 
-          <label for="password">Şifre</label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Şifrenizi girin"
-            autocomplete="off"
-            required
-          >
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:21px;
+  font-weight:700;
+}
 
-          <div class="gender-title">Cinsiyet</div>
+.logo-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--pink);
+  box-shadow:0 0 12px rgba(232,62,140,.7);
+}
 
-          <div class="gender-options">
+.top-actions{
+  display:flex;
+  gap:8px;
+}
 
-            <label class="gender-option female">
-              <input type="radio" name="gender" value="female" checked>
-              <span>♀</span>
-              Kadın
-            </label>
+.icon-btn,
+.menu-btn{
+  width:40px;
+  height:40px;
+  border-radius:8px;
+  color:white;
+  background:transparent;
+  font-size:19px;
+}
 
-            <label class="gender-option male">
-              <input type="radio" name="gender" value="male">
-              <span>♂</span>
-              Erkek
-            </label>
+.icon-btn:hover,
+.menu-btn:hover{
+  background:rgba(255,255,255,.08);
+}
 
-          </div>
+.menu-btn{
+  display:none;
+}
 
-          <button type="submit" class="login-btn">
-            GİRİŞ YAP
-          </button>
+/* GİRİŞ */
 
-        </form>
+.login-page{
+  min-height:calc(100vh - 64px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:30px 15px;
+}
 
-        <div class="login-info">
-          <span>🔒</span>
-          Bilgileriniz gizli tutulur.
-        </div>
+.login-card{
+  width:100%;
+  max-width:430px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:34px;
+  box-shadow:0 15px 45px rgba(17,27,43,.09);
+}
 
-      </div>
-    </main>
+.login-logo{
+  text-align:center;
+  margin-bottom:28px;
+}
 
-
-    <!-- SOHBET PANELİ -->
-    <main class="chat-page" id="chatPage">
-
-      <!-- SOL MENÜ -->
-      <aside class="sidebar" id="sidebar">
-
-        <div class="user-box">
-          <div class="user-name" id="currentUser">Kullanıcı</div>
-          <div class="online-status">
-            <span></span> Çevrimi
+.heart{
+  width:64px;
+  height:64px;
+  margin:
