@@ -107,6 +107,11 @@ input:focus{
   cursor:pointer;
 }
 
+.btn:disabled{
+  opacity:.6;
+  cursor:wait;
+}
+
 .register{
   background:#e83e8c;
 }
@@ -114,10 +119,6 @@ input:focus{
 .guest{
   margin-top:10px;
   background:#263650;
-}
-
-.btn:disabled{
-  opacity:.6;
 }
 
 #loginMessage{
@@ -174,18 +175,21 @@ input:focus{
   display:flex;
   flex-direction:column;
   min-width:0;
+  min-height:0;
 }
 
 .chat-title{
   padding:18px;
   border-bottom:1px solid #34445d;
   font-weight:bold;
+  flex-shrink:0;
 }
 
 .messages{
   flex:1;
   padding:20px;
   overflow-y:auto;
+  min-height:0;
 }
 
 .message{
@@ -211,6 +215,7 @@ input:focus{
   gap:10px;
   padding:15px;
   border-top:1px solid #34445d;
+  flex-shrink:0;
 }
 
 .send input{
@@ -256,6 +261,12 @@ input:focus{
   color:#fff;
   cursor:pointer;
 }
+
+
+/* =========================
+   TABLET
+========================= */
+
 @media(max-width:800px){
 
   .chat-layout{
@@ -265,14 +276,15 @@ input:focus{
   }
 
   .sidebar{
-    display:flex;
+    display:flex !important;
     flex-direction:row;
     align-items:center;
-    gap:6px;
     width:100%;
-    height:auto;
-    min-height:58px;
-    padding:8px;
+    min-width:100%;
+    height:60px;
+    min-height:60px;
+    padding:7px 8px;
+    gap:6px;
     overflow-x:auto;
     overflow-y:hidden;
     border-right:0;
@@ -287,33 +299,72 @@ input:focus{
   .channel{
     flex:0 0 auto;
     margin:0;
-    padding:10px 14px;
+    padding:11px 15px;
     white-space:nowrap;
+  }
+
+  .main{
+    flex:1;
+    width:100%;
+    min-height:0;
   }
 
   .users{
     display:none;
   }
-
-  .main{
-    flex:1;
-    min-height:0;
-  }
 }
+
+
+/* =========================
+   TELEFON
+========================= */
 
 @media(max-width:600px){
 
   #chat{
+    display:none;
     height:calc(100vh - 65px);
   }
 
   .chat-layout{
-    display:flex;
+    display:flex !important;
     flex-direction:column;
+    height:100%;
+    width:100%;
   }
 
   .sidebar{
-    display:flex;
+    display:flex !important;
+    visibility:visible !important;
+    height:58px;
+    min-height:58px;
+    width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    flex-shrink:0;
+    padding:7px;
+    background:#1c2a40;
+  }
+
+  .sidebar::-webkit-scrollbar{
+    display:none;
+  }
+
+  .channel{
+    display:block !important;
+    visibility:visible !important;
+    flex:0 0 auto;
+    padding:10px 14px;
+    margin:0;
+    white-space:nowrap;
+  }
+
+  .main{
+    display:flex !important;
+    flex-direction:column;
+    width:100%;
+    height:calc(100% - 58px);
+    min-height:0;
   }
 
   .chat-title{
@@ -321,26 +372,44 @@ input:focus{
   }
 
   .messages{
+    flex:1;
     padding:12px;
+    overflow-y:auto;
   }
 
   .send{
     padding:10px;
+    gap:7px;
+  }
+
+  .send input{
+    min-width:0;
   }
 
   .send button{
-    width:80px;
+    width:75px;
+    min-width:75px;
   }
 
   .login-page{
     margin-top:45px;
+    padding:25px 20px;
+  }
+
+  .logo{
+    font-size:20px;
+  }
+
+  .logout{
+    right:10px;
   }
 }
-
 </style>
 </head>
 
 <body>
+
+<!-- HEADER -->
 
 <div class="header">
 
@@ -427,6 +496,8 @@ input:focus{
 
   <div class="chat-layout">
 
+    <!-- KANALLAR -->
+
     <aside class="sidebar">
 
       <div class="title">
@@ -466,6 +537,8 @@ input:focus{
     </aside>
 
 
+    <!-- ANA CHAT -->
+
     <main class="main">
 
       <div
@@ -497,6 +570,8 @@ input:focus{
 
     </main>
 
+
+    <!-- KULLANICILAR -->
 
     <aside class="users">
 
@@ -588,7 +663,7 @@ function selectGender(button){
 
 
 /* =========================
-   KULLANICI EMAIL
+   EMAIL
 ========================= */
 
 function usernameEmail(username){
@@ -605,8 +680,7 @@ function usernameEmail(username){
       .replace(/ç/g,"c")
       .replace(/[^a-z0-9]/g,"");
 
-  return clean +
-    "@cinselsohbet.com";
+  return clean + "@cinselsohbet.com";
 }
 
 
@@ -691,8 +765,6 @@ async function registerUser(){
       usernameEmail(username);
 
 
-    /* ÖNCE GİRİŞ */
-
     const loginResult =
       await supabaseClient.auth
         .signInWithPassword({
@@ -716,8 +788,6 @@ async function registerUser(){
       return;
     }
 
-
-    /* YOKSA KAYIT */
 
     const registerResult =
       await supabaseClient.auth
@@ -755,7 +825,7 @@ async function registerUser(){
     if(!registerResult.data.session){
 
       showMessage(
-        "Hesap oluşturuldu fakat giriş yapılamadı. Email doğrulamasını kontrol et.",
+        "Hesap oluşturuldu fakat giriş yapılamadı.",
         true
       );
 
@@ -843,6 +913,7 @@ function enterChat(){
 
   online.innerHTML = "";
 
+
   const user =
     document.createElement("div");
 
@@ -867,12 +938,12 @@ function enterChat(){
 
 async function loadMessages(){
 
-  const messagesBox =
+  const box =
     document.getElementById(
       "messages"
     );
 
-  messagesBox.innerHTML = "";
+  box.innerHTML = "";
 
 
   const result =
@@ -888,11 +959,11 @@ async function loadMessages(){
   if(result.error){
 
     console.error(
-      "Mesaj yükleme hatası:",
+      "Mesaj yükleme:",
       result.error
     );
 
-    messagesBox.innerHTML =
+    box.innerHTML =
       '<div class="message">' +
       '<b>Sistem:</b> Mesajlar yüklenemedi.' +
       '</div>';
@@ -917,7 +988,7 @@ async function loadMessages(){
 
 function addMessageToScreen(message){
 
-  const messagesBox =
+  const box =
     document.getElementById(
       "messages"
     );
@@ -955,6 +1026,7 @@ function addMessageToScreen(message){
       message.created_at
     );
 
+
   time.textContent =
     date.toLocaleTimeString(
       "tr-TR",
@@ -969,10 +1041,10 @@ function addMessageToScreen(message){
   div.appendChild(text);
   div.appendChild(time);
 
-  messagesBox.appendChild(div);
+  box.appendChild(div);
 
-  messagesBox.scrollTop =
-    messagesBox.scrollHeight;
+  box.scrollTop =
+    box.scrollHeight;
 }
 
 
@@ -1029,7 +1101,7 @@ async function sendMessage(){
   if(result.error){
 
     console.error(
-      "Mesaj gönderme hatası:",
+      "Mesaj gönderme:",
       result.error
     );
 
@@ -1043,11 +1115,6 @@ async function sendMessage(){
 
 
   input.value = "";
-
-  /*
-    Realtime açıksa mesaj otomatik
-    olarak ekrana gelecektir.
-  */
 }
 
 
@@ -1082,7 +1149,6 @@ function startRealtime(){
           const message =
             payload.new;
 
-
           if(
             message.room ===
             currentRoom
@@ -1093,7 +1159,6 @@ function startRealtime(){
             );
 
           }
-
         }
       )
 
@@ -1148,7 +1213,7 @@ async function changeRoom(
 
 
 /* =========================
-   ENTER İLE MESAJ
+   ENTER
 ========================= */
 
 document.addEventListener(
@@ -1165,7 +1230,6 @@ document.addEventListener(
       event.preventDefault();
 
       sendMessage();
-
     }
 
   }
@@ -1209,7 +1273,7 @@ async function logout(){
 
 
 /* =========================
-   OTOMATİK OTURUM KONTROLÜ
+   OTURUM KONTROL
 ========================= */
 
 window.addEventListener(
@@ -1219,7 +1283,8 @@ window.addEventListener(
     try{
 
       const result =
-        await supabaseClient.auth
+        await supabaseClient
+          .auth
           .getSession();
 
 
@@ -1244,9 +1309,7 @@ window.addEventListener(
         if(currentUsername){
 
           enterChat();
-
         }
-
       }
 
     }catch(error){
